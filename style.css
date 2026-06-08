@@ -66,14 +66,14 @@ header {
 }
 
 .logo-icon {
-    .logo-icon {
-    width: auto;          /* Allows the image to scale naturally */
-    height: 32px;         /* Gives it a slightly bigger, clearer height */
+   .logo-icon {
+    height: 40px;                 /* Restricts the giant image to a neat, small height */
+    width: auto;                  /* Keeps the aspect ratio perfect so it doesn't squish */
     object-fit: contain;
-    border: 2px solid var(--border-color); /* Adds the theme's signature black border */
-    box-shadow: 2px 2px 0px #000000;       /* Adds the neo-brutalist drop shadow */
-    background-color: #ffffff;             /* Keeps background clean behind the asset */
-    border-radius: 4px;   /* Smooths the sharp corners slightly */
+    mix-blend-mode: multiply;     /* Magic line: Hides the white marble background box on dark mode! */
+    filter: brightness(1.2);      /* Makes the neon pinks and purples pop slightly more */
+    vertical-align: middle;
+}
 }
 }
 
