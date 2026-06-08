@@ -67,7 +67,7 @@ header {
 
 .logo-icon {
    .logo-icon {
-    height: 40px;                 /* Restricts the giant image to a neat, small height */
+    height: 16px;                 /* Restricts the giant image to a neat, small height */
     width: auto;                  /* Keeps the aspect ratio perfect so it doesn't squish */
     object-fit: contain;
     mix-blend-mode: multiply;     /* Magic line: Hides the white marble background box on dark mode! */
