@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyVorx // Last-Minute Exam Crunch</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="3dlogo.jpg" alt="⚡" class="logo-icon">
+            <span class="logo-text">STUDYVORX</span>
+        </div>
+        <nav>
+            <a href="index.html" class="active-link">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="feedback.html">Feedback</a>
+            <button class="btn btn-shift" id="themeToggleBtn">Shift Mode</button>
+        </nav>
+    </header>
+
+    <main>
+        <div class="dashboard-grid">
+            
+            <!-- LEFT CORE MODULE -->
+            <section class="panel-box">
+                <div class="panel-header bg-purple">
+                    <span>[Input_Core]</span>
+                    <span>V1.0</span>
+                </div>
+                <div class="panel-body">
+                    <form id="crunchForm" onsubmit="event.preventDefault();">
+                        
+                        <div class="form-group">
+                            <label>Upload Revision Material</label>
+                            <div class="upload-zone">
+                                <span class="retro-folder">📁</span>
+                                <span>Click to Drop PDF, PPT or Notes Text</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Or Paste Material Content Data</label>
+                            <textarea class="textarea-field" placeholder="Paste chapters, concept definitions, or raw study metrics here to build your crunch revision sets..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Target Generation Filter</label>
+                            <select class="select-field">
+                                <option>Multiple Choice Framework (MCQ)</option>
+                                <option>Flashcard Summary Engine</option>
+                                <option>True / False Verification Array</option>
+                            </select>
+                        </div>
+
+                        <button type="button" class="btn btn-action">Generate Crunch Study Set</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- RIGHT MONITOR FEED -->
+            <section class="panel-box">
+                <div class="panel-header bg-teal">
+                    <span>Crunch Feed Monitor</span>
+                    <span>Ready</span>
+                </div>
+                <div class="panel-body">
+                    <div class="monitor-display">
+                        <div class="status-alert">CONSOLES IDLE</div>
+                        <p class="status-desc">
+                            Drop your notes on the left control dashboard to run high-speed, instant AI-simulated revision checks before stepping into exams.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

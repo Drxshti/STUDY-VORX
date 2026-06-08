@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyVorx // Feedback Logging Array</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="3dlogo.jpg" alt="⚡" class="logo-icon">
+            <span class="logo-text">STUDYVORX</span>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="feedback.html" class="active-link">Feedback</a>
+            <button class="btn btn-shift" id="themeToggleBtn">Shift Mode</button>
+        </nav>
+    </header>
+
+    <main style="max-width: 600px;">
+        <section class="panel-box">
+            <div class="panel-header bg-teal">
+                <span>[Telemetry_Feedback]</span>
+                <span>Optimization Log</span>
+            </div>
+            <div class="panel-body">
+                <form id="feedbackForm" onsubmit="event.preventDefault();">
+                    
+                    <div class="form-group">
+                        <label>Output Accuracy Rating</label>
+                        <select class="select-field">
+                            <option>Level 5 // Absolutely Faultless</option>
+                            <option>Level 4 // Minor Compilation Bugs</option>
+                            <option>Level 3 // Average Operational Density</option>
+                            <option>Level 2 // Major Data Leaks</option>
+                            <option>Level 1 // Total Engine Failure</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telemetry Analysis (Comments)</label>
+                        <textarea class="textarea-field" placeholder="Input structural optimization critique or tell us what worked perfectly..."></textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-action">Transmit Telemetry</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
