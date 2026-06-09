@@ -152,22 +152,26 @@ nav a:hover, .active-link {
 /* ==========================================================================
    LAYOUT HOUSING & INTERFACE PANELS
    ========================================================================== */
-main {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
+.main-container {
+  display: flex;
+  flex-direction: row; /* Desktop standard */
+  flex-wrap: wrap;     /* Crucial: allows boxes to drop below when tight */
+  width: 100%;
+  padding: 10px;       /* Gives breathing room on phone edges */
 }
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-}
-
+/* On mobile screens, stack the boxes vertically and make them fill the screen */
 @media (max-width: 768px) {
-    .dashboard-grid { grid-template-columns: 1fr; }
-}
-
+  .main-container {
+    flex-direction: column; 
+  }
+  
+  /* Target your main cards/containers (like the upload box and feed monitor) */
+  .dashboard-card { 
+    width: 100% !important; 
+    max-width: 100%;
+    margin-bottom: 20px; /* Separates the boxes vertically */
+  }
 .panel-box {
     background-color: var(--container-bg);
     border: 4px solid var(--border-color);
