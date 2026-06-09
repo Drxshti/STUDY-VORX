@@ -42,7 +42,7 @@ body {
     color: var(--text-color);
     padding-bottom: 60px;
     transition: background-color 0.2s ease, color 0.2s ease;
-    overflow-x: hidden; /* Prevents awkward horizontal screen shaking on mobile */
+    overflow-x: hidden; /* Stops horizontal scrolling issues on small screens */
 }
 
 /* ==========================================================================
@@ -58,8 +58,6 @@ header {
     position: sticky;
     top: 0;
     z-index: 100;
-    flex-wrap: wrap; /* Allows wrap if screen is extremely narrow */
-    gap: 15px;
 }
 
 .logo-area {
@@ -91,8 +89,7 @@ header {
 nav {
     display: flex;
     align-items: center;
-    gap: 10px;
-    flex-wrap: wrap; /* Fixes navbar crashing and overflowing */
+    gap: 15px;
 }
 
 nav a {
@@ -102,7 +99,6 @@ nav a {
     font-size: 14px;
     padding: 8px 12px;
     border: 3px solid transparent;
-    white-space: nowrap; /* Keeps links on a single line */
 }
 
 nav a:hover, .active-link {
@@ -156,26 +152,25 @@ nav a:hover, .active-link {
 }
 
 /* ==========================================================================
-   LAYOUT HOUSING & INTERFACE PANELS
+   LAYOUT HOUSING & INTERFACE PANELS (Desktop Side-by-Side Setup)
    ========================================================================== */
 .main-container {
     display: flex;
     flex-direction: row; 
-    flex-wrap: wrap;     
     width: 100%;
-    padding: 20px;       
-    gap: 25px; /* Creates spacing between side-by-side columns */
+    padding: 25px;       
+    gap: 25px;           /* Gives proper separation between dashboard columns */
+    align-items: flex-start;
 }
 
-/* Base Panel Box Styling */
 .panel-box {
     background-color: var(--container-bg);
     border: 4px solid var(--border-color);
     box-shadow: var(--neo-shadow);
     margin-bottom: 30px;
     overflow: hidden;
-    flex: 1 1 450px; /* Let containers sit beautifully side-by-side if there is room */
-    max-width: 100%;
+    flex: 1;             /* Makes columns share equal width cleanly on PC */
+    min-width: 0;        /* Prevents flex items from breaking layout bounding boxes */
 }
 
 .panel-header {
@@ -215,7 +210,6 @@ nav a:hover, .active-link {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    width: 100%;
 }
 
 .retro-folder { font-size: 36px; }
@@ -243,7 +237,6 @@ nav a:hover, .active-link {
     justify-content: center;
     text-align: center;
     padding: 30px;
-    width: 100%;
 }
 
 .status-alert {
@@ -261,18 +254,19 @@ nav a:hover, .active-link {
 .retro-divider { border: 2px dashed var(--border-color); margin: 25px 0; }
 
 /* ==========================================================================
-   MEDIA QUERIES FOR COMPACT PHONE RESPONSIVENESS
+   MOBILE RESPONSIVE ADAPTATION (Kick-in under 850px width screens)
    ========================================================================== */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
     header {
         flex-direction: column;
-        text-align: center;
-        padding: 15px 2%;
+        gap: 12px;
+        padding: 15px;
     }
 
     nav {
+        flex-wrap: wrap;
         justify-content: center;
-        width: 100%;
+        gap: 8px;
     }
 
     nav a {
@@ -281,22 +275,12 @@ nav a:hover, .active-link {
     }
 
     .main-container {
-        flex-direction: column;
-        padding: 10px;
-        gap: 15px;
+        flex-direction: column; /* Stacks panels vertically on mobile */
+        padding: 15px;
+        gap: 0;
     }
 
     .panel-box {
-        flex: 1 1 100%;
-        margin-bottom: 15px;
-    }
-
-    .panel-body {
-        padding: 15px;
-    }
-
-    .monitor-display {
-        padding: 15px;
-        min-height: 260px;
+        width: 100%;            /* Makes containers safely fill the whole mobile width */
     }
 }
