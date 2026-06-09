@@ -1,23 +1,7 @@
 /* ==========================================================================
-   GLOBAL NEU-BRUTALIST ARCHITECTURE
+   GLOBAL NEU-BRUTALIST ARCHITECTURE (DARK MODE DEFAULT)
    ========================================================================== */
 :root {
-    --bg-color: #f4ebd9;          
-    --text-color: #000000;
-    --container-bg: #ffffff;
-    --border-color: #000000;
-    
-    --accent-purple: #9b5de5;
-    --accent-teal: #00f5d4;
-    --accent-pink: #f15bb5;
-    --accent-yellow: #fee440;
-    
-    --neo-shadow: 6px 6px 0px #000000;
-    --neo-shadow-clickable: 3px 3px 0px #000000;
-}
-
-/* Shift Mode State Modifications */
-[data-theme="dark"] {
     --bg-color: #120c1f;          
     --text-color: #ffffff;
     --container-bg: #1d162e;
@@ -27,6 +11,22 @@
     --accent-teal: #00f5d4;
     --accent-pink: #ff007f;
     --accent-yellow: #ffee32;
+    
+    --neo-shadow: 6px 6px 0px #000000;
+    --neo-shadow-clickable: 3px 3px 0px #000000;
+}
+
+/* Light Mode toggle state (if you ever want to flip back using JavaScript) */
+[data-theme="light"] {
+    --bg-color: #f4ebd9;          
+    --text-color: #000000;
+    --container-bg: #ffffff;
+    --border-color: #000000;
+    
+    --accent-purple: #9b5de5;
+    --accent-teal: #00f5d4;
+    --accent-pink: #f15bb5;
+    --accent-yellow: #fee440;
 }
 
 * {
@@ -42,7 +42,7 @@ body {
     color: var(--text-color);
     padding-bottom: 60px;
     transition: background-color 0.2s ease, color 0.2s ease;
-    overflow-x: hidden; /* Stops horizontal scrolling issues on small screens */
+    overflow-x: hidden; 
 }
 
 /* ==========================================================================
@@ -152,14 +152,14 @@ nav a:hover, .active-link {
 }
 
 /* ==========================================================================
-   LAYOUT HOUSING & INTERFACE PANELS (Desktop Side-by-Side Setup)
+   LAYOUT HOUSING & INTERFACE PANELS
    ========================================================================== */
 .main-container {
     display: flex;
     flex-direction: row; 
     width: 100%;
     padding: 25px;       
-    gap: 25px;           /* Gives proper separation between dashboard columns */
+    gap: 25px;           
     align-items: flex-start;
 }
 
@@ -169,8 +169,8 @@ nav a:hover, .active-link {
     box-shadow: var(--neo-shadow);
     margin-bottom: 30px;
     overflow: hidden;
-    flex: 1;             /* Makes columns share equal width cleanly on PC */
-    min-width: 0;        /* Prevents flex items from breaking layout bounding boxes */
+    flex: 1;             
+    min-width: 0;        
 }
 
 .panel-header {
@@ -254,7 +254,7 @@ nav a:hover, .active-link {
 .retro-divider { border: 2px dashed var(--border-color); margin: 25px 0; }
 
 /* ==========================================================================
-   MOBILE RESPONSIVE ADAPTATION (Kick-in under 850px width screens)
+   MOBILE RESPONSIVE ADAPTATION
    ========================================================================== */
 @media (max-width: 850px) {
     header {
@@ -275,12 +275,12 @@ nav a:hover, .active-link {
     }
 
     .main-container {
-        flex-direction: column; /* Stacks panels vertically on mobile */
+        flex-direction: column; 
         padding: 15px;
         gap: 0;
     }
 
     .panel-box {
-        width: 100%;            /* Makes containers safely fill the whole mobile width */
+        width: 100%;            
     }
 }
