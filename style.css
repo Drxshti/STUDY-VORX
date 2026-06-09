@@ -62,19 +62,21 @@ header {
 .logo-area {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
+/* Fixed nested class bug & tuned to look like a small sticker */
 .logo-icon {
-   .logo-icon {
-    height: 16px;                 /* Restricts the giant image to a neat, small height */
-    width: auto;                  /* Keeps the aspect ratio perfect so it doesn't squish */
-    object-fit: contain;
-    mix-blend-mode: multiply;     /* Magic line: Hides the white marble background box on dark mode! */
-    filter: brightness(1.2);      /* Makes the neon pinks and purples pop slightly more */
+    height: 38px;                 /* Perfect size for a subtle yet visible sticker badge */
+    width: 38px;                  /* Square dimensions to frame the artwork beautifully */
+    object-fit: cover;            /* Crops the image seamlessly into the square container */
+    border: 2px solid #000000;    /* Thick retro black outline around the sticker edge */
+    border-radius: 4px;           /* Slightly rounded corners for a die-cut sticker look */
+    background-color: #ffffff;    /* Gives it a solid white backing shield */
+    box-shadow: 2px 2px 0px #000; /* Distinct flat Brutalist mini drop shadow */
+    mix-blend-mode: normal;       /* Set to normal to preserve the solid background pop */
+    filter: brightness(1.1) contrast(1.1); /* Sharpens the neon lightning effects */
     vertical-align: middle;
-}
-}
 }
 
 .logo-text {
