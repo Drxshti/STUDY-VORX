@@ -65,20 +65,18 @@ header {
     gap: 12px;
 }
 
-/* Fixed nested class bug & tuned to look like a small sticker */
 .logo-icon {
-    height: 38px;                 /* Perfect size for a subtle yet visible sticker badge */
-    width: 38px;                  /* Square dimensions to frame the artwork beautifully */
-    object-fit: cover;            /* Crops the image seamlessly into the square container */
-    border: 2px solid #000000;    /* Thick retro black outline around the sticker edge */
-    border-radius: 4px;           /* Slightly rounded corners for a die-cut sticker look */
-    background-color: #ffffff;    /* Gives it a solid white backing shield */
-    box-shadow: 2px 2px 0px #000; /* Distinct flat Brutalist mini drop shadow */
-    mix-blend-mode: normal;       /* Set to normal to preserve the solid background pop */
-    filter: brightness(1.1) contrast(1.1); /* Sharpens the neon lightning effects */
+    height: 55px;                 /* Expanded size to make it highly visible and bold */
+    width: 55px;                  /* Square dimensions to keep the framing crisp */
+    object-fit: cover;            /* Crops the image seamlessly into the larger container */
+    border: 3px solid #000000;    /* Thickened black border to match the larger scale */
+    border-radius: 6px;           /* Slightly increased rounding for a clean die-cut edge */
+    background-color: #ffffff;    /* Solid white backing shield to pop off the navigation bar */
+    box-shadow: 3px 3px 0px #000000; /* Deepened flat brutalist drop shadow for that heavy arcade feel */
+    mix-blend-mode: normal;       /* Preserves the solid white background pop */
+    filter: brightness(1.1) contrast(1.1); /* Keeps the bright neon elements sharp and impactful */
     vertical-align: middle;
 }
-
 .logo-text {
     font-size: 24px;
     letter-spacing: 2px;
