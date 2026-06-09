@@ -42,6 +42,7 @@ body {
     color: var(--text-color);
     padding-bottom: 60px;
     transition: background-color 0.2s ease, color 0.2s ease;
+    overflow-x: hidden; /* Prevents awkward horizontal screen shaking on mobile */
 }
 
 /* ==========================================================================
@@ -57,6 +58,8 @@ header {
     position: sticky;
     top: 0;
     z-index: 100;
+    flex-wrap: wrap; /* Allows wrap if screen is extremely narrow */
+    gap: 15px;
 }
 
 .logo-area {
@@ -66,17 +69,18 @@ header {
 }
 
 .logo-icon {
-    height: 55px;                 /* Expanded size to make it highly visible and bold */
-    width: 55px;                  /* Square dimensions to keep the framing crisp */
-    object-fit: cover;            /* Crops the image seamlessly into the larger container */
-    border: 3px solid #000000;    /* Thickened black border to match the larger scale */
-    border-radius: 6px;           /* Slightly increased rounding for a clean die-cut edge */
-    background-color: #ffffff;    /* Solid white backing shield to pop off the navigation bar */
-    box-shadow: 3px 3px 0px #000000; /* Deepened flat brutalist drop shadow for that heavy arcade feel */
-    mix-blend-mode: normal;       /* Preserves the solid white background pop */
-    filter: brightness(1.1) contrast(1.1); /* Keeps the bright neon elements sharp and impactful */
+    height: 55px;                 
+    width: 55px;                  
+    object-fit: cover;            
+    border: 3px solid #000000;    
+    border-radius: 6px;           
+    background-color: #ffffff;    
+    box-shadow: 3px 3px 0px #000000; 
+    mix-blend-mode: normal;       
+    filter: brightness(1.1) contrast(1.1); 
     vertical-align: middle;
 }
+
 .logo-text {
     font-size: 24px;
     letter-spacing: 2px;
@@ -87,7 +91,8 @@ header {
 nav {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
+    flex-wrap: wrap; /* Fixes navbar crashing and overflowing */
 }
 
 nav a {
@@ -97,6 +102,7 @@ nav a {
     font-size: 14px;
     padding: 8px 12px;
     border: 3px solid transparent;
+    white-space: nowrap; /* Keeps links on a single line */
 }
 
 nav a:hover, .active-link {
@@ -153,31 +159,23 @@ nav a:hover, .active-link {
    LAYOUT HOUSING & INTERFACE PANELS
    ========================================================================== */
 .main-container {
-  display: flex;
-  flex-direction: row; /* Desktop standard */
-  flex-wrap: wrap;     /* Crucial: allows boxes to drop below when tight */
-  width: 100%;
-  padding: 10px;       /* Gives breathing room on phone edges */
+    display: flex;
+    flex-direction: row; 
+    flex-wrap: wrap;     
+    width: 100%;
+    padding: 20px;       
+    gap: 25px; /* Creates spacing between side-by-side columns */
 }
 
-/* On mobile screens, stack the boxes vertically and make them fill the screen */
-@media (max-width: 768px) {
-  .main-container {
-    flex-direction: column; 
-  }
-  
-  /* Target your main cards/containers (like the upload box and feed monitor) */
-  .dashboard-card { 
-    width: 100% !important; 
-    max-width: 100%;
-    margin-bottom: 20px; /* Separates the boxes vertically */
-  }
+/* Base Panel Box Styling */
 .panel-box {
     background-color: var(--container-bg);
     border: 4px solid var(--border-color);
     box-shadow: var(--neo-shadow);
     margin-bottom: 30px;
     overflow: hidden;
+    flex: 1 1 450px; /* Let containers sit beautifully side-by-side if there is room */
+    max-width: 100%;
 }
 
 .panel-header {
@@ -217,6 +215,7 @@ nav a:hover, .active-link {
     align-items: center;
     justify-content: center;
     gap: 12px;
+    width: 100%;
 }
 
 .retro-folder { font-size: 36px; }
@@ -244,6 +243,7 @@ nav a:hover, .active-link {
     justify-content: center;
     text-align: center;
     padding: 30px;
+    width: 100%;
 }
 
 .status-alert {
@@ -259,3 +259,44 @@ nav a:hover, .active-link {
 .text-teal { color: var(--accent-teal); }
 .paragraph-text { font-size: 14px; line-height: 1.6; }
 .retro-divider { border: 2px dashed var(--border-color); margin: 25px 0; }
+
+/* ==========================================================================
+   MEDIA QUERIES FOR COMPACT PHONE RESPONSIVENESS
+   ========================================================================== */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px 2%;
+    }
+
+    nav {
+        justify-content: center;
+        width: 100%;
+    }
+
+    nav a {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .main-container {
+        flex-direction: column;
+        padding: 10px;
+        gap: 15px;
+    }
+
+    .panel-box {
+        flex: 1 1 100%;
+        margin-bottom: 15px;
+    }
+
+    .panel-body {
+        padding: 15px;
+    }
+
+    .monitor-display {
+        padding: 15px;
+        min-height: 260px;
+    }
+}
