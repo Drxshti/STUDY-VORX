@@ -267,6 +267,42 @@ nav a:hover, .active-link {
 .retro-divider { border: 2px dashed var(--border-color); margin: 25px 0; }
 
 /* ==========================================================================
+   COMBINED CONTACT & FEEDBACK COMPONENT
+   ========================================================================== */
+/* Expand the panel box limit slightly so the two columns fit side-by-side beautifully */
+.center-layout .combined-contact-box {
+    flex: 0 1 850px;
+    max-width: 850px;
+    width: 100%;
+}
+
+.contact-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 35px;
+    align-items: stretch;
+}
+
+.contact-info-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.feedback-form-side {
+    flex: 1.2; /* Gives the form slightly more breathing room */
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-meta p {
+    font-size: 13px;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
    MOBILE RESPONSIVE ADAPTATION
    ========================================================================== */
 @media (max-width: 850px) {
@@ -296,5 +332,19 @@ nav a:hover, .active-link {
     .panel-box, .center-layout .panel-box {
         width: 100%;            
         max-width: 100%;
+    }
+
+    /* Mobile Responsive adjustment for the split matrix view */
+    .contact-grid {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .contact-info-side, .feedback-form-side {
+        width: 100%;
+    }
+    
+    .retro-divider {
+        margin: 15px 0;
     }
 }
