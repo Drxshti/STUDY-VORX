@@ -25,7 +25,6 @@
     <main>
         <div class="dashboard-grid">
             
-            <!-- LEFT CORE MODULE -->
             <section class="panel-box">
                 <div class="panel-header bg-purple">
                     <span>[Input_Core]</span>
@@ -36,9 +35,10 @@
                         
                         <div class="form-group">
                             <label>Upload Revision Material</label>
-                            <div class="upload-zone">
+                            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
                                 <span class="retro-folder">📁</span>
-                                <span>Click to Drop PDF, PPT or Notes Text</span>
+                                <span id="uploadText">Click to Drop PDF, PPT or Notes Text</span>
+                                <input type="file" id="fileInput" accept=".txt,.md" style="display: none;">
                             </div>
                         </div>
 
@@ -49,33 +49,32 @@
 
                         <div class="form-group">
                             <label>Target Generation Filter</label>
-                            <select class="select-field">
-                                <option>Multiple Choice Framework (MCQ)</option>
-                                <option>Very Short Answer (1 marker)</option>
-                                <option>Short Answer (3 marker)</option>
-                                <option>Long Answer (5 marker)</option>
-                                <option>Flashcard Summary Engine</option>
-                                <option>True / False Verification Array</option>
+                            <select class="select-field filter-select">
+                                <option value="MCQ" selected>Multiple Choice Framework (MCQ)</option>
+                                <option value="VERY_SHORT">Very Short Answer (1 marker)</option>
+                                <option value="SHORT">Short Answer (3 marker)</option>
+                                <option value="LONG">Long Answer (5 marker)</option>
+                                <option value="FLASHCARD">Flashcard Summary Engine</option>
+                                <option value="TRUE_FALSE">True / False Verification Array</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                          <label>QUANTITY COUNT FILTER</label>
-                          <select class="select-field quantity-select">
-                              <option value="5">5 Questions</option>
-                              <option value="10" selected>10 Questions</option>
-                              <option value="25">25 Questions</option>
-                              <option value="50">50 Questions</option>
-                              <option value="100">100 Questions</option>
-                         </select>
-                     </div>
+                            <label>QUANTITY COUNT FILTER</label>
+                            <select class="select-field quantity-select">
+                                <option value="5">5 Questions</option>
+                                <option value="10" selected>10 Questions</option>
+                                <option value="25">25 Questions</option>
+                                <option value="50">50 Questions</option>
+                                <option value="100">100 Questions</option>
+                            </select>
+                        </div>
 
                         <button type="button" class="btn btn-action">Generate Crunch Study Set</button>
                     </form>
                 </div>
             </section>
 
-            <!-- RIGHT MONITOR FEED -->
             <section class="panel-box">
                 <div class="panel-header bg-teal">
                     <span>Crunch Feed Monitor</span>
