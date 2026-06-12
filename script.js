@@ -62,76 +62,115 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // CORE CRUNCH ENGINE (Connecting to n8n)
     // ==========================================
-    if (generateBtn) {
-        generateBtn.addEventListener('click', async () => {
-            // Prioritize manually typed text; fallback to uploaded file text if textarea is unchanged
-            let textContent = textareaField ? textareaField.value.trim() : '';
+ // ==========================================
+// CORE CRUNCH DIRECT GEMINI GENERATION ENGINE
+// ==========================================
+if (generateBtn) {
+    generateBtn.addEventListener('click', async () => {
+        let textContent = textareaField ? textareaField.value.trim() : '';
+        
+        if (!textContent && uploadedTextContent) {
+            textContent = uploadedTextContent;
+        }
+
+        const selectedFilter = filterSelect ? filterSelect.value : 'MCQ';
+        const selectedQuantity = quantitySelect ? quantitySelect.value : '10 Questions';
+
+        // 1. Validation check
+        if (!textContent || textContent.startsWith("... [Remaining text")) {
+            alert("Please paste your study notes or upload a text file first!");
+            return;
+        }
+
+        // 2. Loading State View
+        if (monitorDisplay) {
+            monitorDisplay.style.justifyContent = 'center';
+            monitorDisplay.innerHTML = `
+                <div class="status-alert text-teal">CRUNCHING DATA...</div>
+                <div class="status-desc">Connecting directly to Gemini AI. Building your custom study set. Please wait.</div>
+            `;
+        }
+
+        try {
+            // CRITICAL: Replace this string with your actual Google AI Studio API key
+            const GEMINI_API_KEY = 'YOUR_SECRET_GOOGLE_API_KEY';
+            const GEMINI_URL = `https://generatetheme.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+            // Build the system prompt rules right into the request packet
+            const promptInstruction = `
+            You are an elite exam generation engine. Analyze the provided study text and create a custom evaluation set.
+
+            The user has explicitly requested this quantity of questions: ${selectedQuantity}
+            (Note: Extract the exact number from that text. For example, if it says "25 Questions", generate exactly 25 items).
+
+            The user has explicitly requested this structural format based on their selector choice: ${selectedFilter}
+
+            Follow these structural instructions based on what matches the requested format:
+            - If format is "Multiple Choice Framework (MCQ)", return standard multiple-choice questions with an "options" array containing 4 distinct choices (A, B, C, D).
+            - If format is "Very Short Answer (1 marker)", generate direct, concise one-sentence core conceptual questions. Leave the "options" parameter as an empty array [].
+            - If format is "Short Answer (3 marker)", generate deeper conceptual questions that require a brief paragraph explanation. Leave the "options" parameter as an empty array [].
+            - If format is "Long Answer (5 marker)", generate critical thinking, multi-part exam questions that require extensive explanations. Leave the "options" parameter as an empty array [].
+            - If format is "Flashcard Summary Engine", return a key term or core question as the "question", and place the single concise answer/definition inside a single option array element: ["ANSWER: Your definition here"].
+            - If format is "True / False Verification Array", return fact-checking statements as the "question", followed by an options array exactly matching ["A) True", "B) False"].
+
+            Strict Constraint: You must reply ONLY with a valid stringified JSON array. Do not include conversational text, markdown code block wraps, or backticks like \`\`\`json or \`\`\` at the start or end of your text message response.
+
+            Output Format Example structural blueprint:
+            [
+              {
+                "question": "Question text goes here?",
+                "options": ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"]
+              }
+            ]
+
+            Source Material Data to evaluate:
+            ${textContent}
+            `;
+
+            // 3. Fire the payload packet to Google's servers
+            const response = await fetch(GEMINI_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: promptInstruction }]
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Google API returned an internal connection error.');
+            }
+
+            const apiData = await response.json();
             
-            if (!textContent && uploadedTextContent) {
-                textContent = uploadedTextContent;
+            // Extract the raw text output response string from Gemini's JSON body template structure
+            const rawTextResponse = apiData.candidates[0].content.parts[0].text.trim();
+            
+            // Convert that text string back into a clean programmatic JavaScript Array
+            const questionsList = JSON.parse(rawTextResponse);
+
+            if (!questionsList || !Array.isArray(questionsList)) {
+                throw new Error('AI structuring failed to output an array format.');
             }
 
-            const selectedFilter = filterSelect ? filterSelect.value : 'MCQ';
-            const selectedQuantity = quantitySelect ? quantitySelect.value : '10';
+            // 4. Render output results inside scrolling monitor box
+            renderQuestions(questionsList);
 
-            // 1. Validation check
-            if (!textContent || textContent.startsWith("... [Remaining text")) {
-                alert("Please paste your study notes or upload a text file first!");
-                return;
-            }
-
-            // 2. Loading State Animation View
+        } catch (error) {
             if (monitorDisplay) {
                 monitorDisplay.style.justifyContent = 'center';
                 monitorDisplay.innerHTML = `
-                    <div class="status-alert text-teal">CRUNCHING DATA...</div>
-                    <div class="status-desc">n8n workflow is routing your file content to Gemini. Building ${selectedQuantity} items. Please wait.</div>
+                    <div class="status-alert" style="color: var(--accent-pink);">API ERROR</div>
+                    <div class="status-desc">${error.message}. Make sure your Google API Key is valid!</div>
                 `;
             }
-
-            try {
-                // 3. Connect to your live n8n Webhook Endpoint
-                // Replace this URL with your exact live n8n production Webhook link
-                const N8N_WEBHOOK_URL = 'https://your-n8n-instance-domain.com/webhook/generate-crunch-questions';
-
-                const response = await fetch(N8N_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        text: textContent,
-                        filter: selectedFilter,
-                        quantity: parseInt(selectedQuantity, 10)
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('The automation workflow returned a server processing fault.');
-                }
-
-                const rawData = await response.json();
-                const questionsList = Array.isArray(rawData) ? rawData : rawData.questions;
-
-                if (!questionsList || !Array.isArray(questionsList)) {
-                    throw new Error('AI structuring failed to output an array format.');
-                }
-
-                // 4. Render output results inside scrolling monitor box
-                renderQuestions(questionsList);
-
-            } catch (error) {
-                if (monitorDisplay) {
-                    monitorDisplay.style.justifyContent = 'center';
-                    monitorDisplay.innerHTML = `
-                        <div class="status-alert" style="color: var(--accent-pink);">SYSTEM FAULT</div>
-                        <div class="status-desc">${error.message}. Verify that your n8n canvas execution is activated.</div>
-                    `;
-                }
-            }
-        });
-    }
-
+        }
+    });
+}
+         
     // ==========================================
     // UTILITY DOM RENDERING ENGINE
     // ==========================================
