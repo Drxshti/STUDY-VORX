@@ -153,19 +153,13 @@ nav a:hover, .active-link {
 /* ==========================================================================
    LAYOUT HOUSINGS & CORE PANELS
    ========================================================================== */
-.main-container {
+.dashboard-grid, .main-container {
     display: flex;
     flex-direction: row; 
     width: 100%;
     padding: 25px;       
     gap: 25px;           
     align-items: flex-start;
-}
-
-/* Add this modifier class to the .main-container ONLY on your About page HTML */
-.main-container.center-layout {
-    justify-content: center;
-    min-height: calc(100vh - 100px);
 }
 
 .panel-box {
@@ -178,27 +172,14 @@ nav a:hover, .active-link {
     min-width: 0;        
 }
 
-/* Keeps the standalone manifesto box beautifully bounded when centered */
-.center-layout .panel-box {
-    flex: 0 1 650px;
-    max-width: 650px;
-    width: 100%;
+/* Mobile responsive crash protection */
+@media (max-width: 850px) {
+    .dashboard-grid, .main-container {
+        flex-direction: column; 
+        padding: 15px;
+        gap: 20px;
+    }
 }
-
-.panel-header {
-    padding: 12px 15px;
-    border-bottom: 4px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-size: 14px;
-}
-
-.bg-purple { background-color: var(--accent-purple); }
-.bg-teal { background-color: var(--accent-teal); color: #000000 !important; }
-.panel-body { padding: 25px; }
-
 /* ==========================================================================
    FORM HOUSINGS & INPUT ELEMENTS
    ========================================================================== */
