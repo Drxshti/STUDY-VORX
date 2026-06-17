@@ -33,23 +33,23 @@
                 <div class="panel-body">
                     <form id="crunchForm" onsubmit="event.preventDefault();">
                         
-                        <div class="form-group">
-                            <label>Upload Revision Material</label>
-                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                                <span class="retro-folder">📁</span>
-                                <span id="uploadText">Click to Drop PDF, PPT or Notes Text</span>
-                                <input type="file" id="fileInput" accept=".txt,.md" style="display: none;">
-                            </div>
+                <div class="form-group">
+                    <label>Upload Revision Material</label>
+                    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                         <span class="retro-folder">📁</span>
+                         <span id="uploadText">Click to Drop PDF, PPT or Notes Text</span>
+                         <input type="file" id="fileInput" accept=".txt,.md" style="display: none;">
+                    </div>
 
-                            <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
-                                <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
-                                    <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
-                                </div>
-                                <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace;">0% TRANSMITTED</div>
-                            </div>
-
-                            <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none; font-size: 13px;"></div>
+                    <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
+                        <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
+                          <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
                         </div>
+                        <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace;">0% TRANSMITTED</div>
+                    </div>
+
+                     <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none; font-size: 13px; font-weight: bold;"></div>
+                   </div>
 
                         <div class="form-group">
                             <label>Or Paste Material Content Data</label>
