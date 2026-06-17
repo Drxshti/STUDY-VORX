@@ -17,7 +17,6 @@
             <a href="index.html" class="active-link">Home</a>
             <a href="about.html">About Us</a>
             <a href="contact.html">Contact</a>
-            <a href="feedback.html">Feedback</a>
             <button class="btn btn-shift">Shift Mode</button>
         </nav>
     </header>
@@ -35,32 +34,21 @@
                         
                         <div class="form-group">
                             <label>Upload Revision Material</label>
-                            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
                                 <span class="retro-folder">📁</span>
                                 <span id="uploadText">Click to Drop PDF, PPT or Notes Text</span>
                                 <input type="file" id="fileInput" accept=".txt,.md" style="display: none;">
                             </div>
+
+                            <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
+                                <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
+                                    <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
+                                </div>
+                                <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace;">0% TRANSMITTED</div>
+                            </div>
+
+                            <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none; font-size: 13px;"></div>
                         </div>
-
-                        <!-- FILE UPLOAD STATE TRACKER BLOCK -->
-<div class="form-group">
-    <label>SYSTEM FILE PACKET LOADER</label>
-    <div class="upload-zone" id="dropZone" onclick="document.getElementById('task2FileInput').click()">
-        <span class="retro-folder">📁</span>
-        <span id="task2UploadText">Select Core Text File (.txt, .md)</span>
-        <input type="file" id="task2FileInput" accept=".txt,.md" style="display: none;">
-    </div>
-
-    <!-- Interactive Progress and Status Metrics -->
-    <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
-        <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
-            <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
-        </div>
-        <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right;">0% TRANSMITTED</div>
-    </div>
-
-    <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none;"></div>
-</div>
 
                         <div class="form-group">
                             <label>Or Paste Material Content Data</label>
