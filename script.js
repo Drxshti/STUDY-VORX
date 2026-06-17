@@ -183,8 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 try {
-                    // CRITICAL: Replace with your actual API key
-                    const GEMINI_API_KEY = 'YOUR_SECRET_GOOGLE_API_KEY';
+                    // YOUR ACTIVE API KEY
+                    const GEMINI_API_KEY = 'AQ.Ab8RN6LzKNQOto3d4YuIfAfrj5F_N2QResoCql2AMsKDOSytVQ';
                     
                     // FIXED BUG A: Updated endpoint url to generativelanguage
                     const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
@@ -274,4 +274,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
