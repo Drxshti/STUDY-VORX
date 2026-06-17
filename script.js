@@ -99,20 +99,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-  // ==========================================
+        // ==========================================
     // 4. MAIN APP LOGIC — FILE UPLOAD ENGINE
     // ==========================================
-    if (!isLoginPage && fileInput) {
+    if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            // 1. Initial State: Show progress bar wrapper, clear past messages
-            progressWrapper.style.display = 'block';
-            statusMessage.style.display = 'none';
-            progressBar.style.width = '0%';
-            progressPercent.innerText = '0% TRANSMITTED';
-            uploadText.innerText = `READING: ${file.name}...`;
+            // 1. Reset UI elements & invoke active loading metrics view layout
+            if (progressWrapper) progressWrapper.style.display = 'block';
+            if (statusMessage) statusMessage.style.display = 'none';
+            if (progressBar) progressBar.style.width = '0%';
+            if (progressPercent) progressPercent.innerText = '0% TRANSMITTED';
+            if (uploadText) uploadText.innerText = `READING: ${file.name}...`;
 
             const reader = new FileReader();
             
@@ -120,51 +120,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 const extractedText = evt.target.result;
                 let progress = 0;
 
-                // 2. Progress State: Animate the bar incrementally
-                // SNAPSHOT POINT: Take your progress bar screenshot while this is moving!
+                // 2. Clear progress timeline increments
                 const uploadSimulation = setInterval(() => {
-                    progress += 20; // Climbs smoothly by 20% each step
-                    progressBar.style.width = `${progress}%`;
-                    progressPercent.innerText = `${progress}% TRANSMITTED`;
+                    progress += 20;
+                    if (progressBar) progressBar.style.width = `${progress}%`;
+                    if (progressPercent) progressPercent.innerText = `${progress}% TRANSMITTED`;
 
                     if (progress >= 100) {
                         clearInterval(uploadSimulation);
-                        progressWrapper.style.display = 'none'; // Hide bar when finished
-                        statusMessage.style.display = 'block';  // Reveal final message status
                         
-                        // 3. Conditional Testing Branch for Success vs Failure triggers
+                        // Commit file data string directly to your global container variable
+                        uploadedTextContent = extractedText;
+                        
+                        if (progressWrapper) progressWrapper.style.display = 'none';
+                        if (statusMessage) statusMessage.style.display = 'block';
+                        
+                        // 3. Evaluate file parameters for test screenshot variations
                         if (file.name.toLowerCase() === 'fail.txt') {
-                            // FAILURE STATE SCREENSHOT TRIGGER
-                            statusMessage.style.color = 'var(--accent-pink)';
-                            statusMessage.innerText = `❌ FAILURE: File [${file.name}] size threshold overflow or corrupted parameters.`;
-                            uploadText.innerText = "❌ Upload Failed.";
+                            if (statusMessage) {
+                                statusMessage.style.color = 'var(--accent-pink)';
+                                statusMessage.innerText = `❌ FAILURE: File [${file.name}] size threshold overflow or corrupted parameters.`;
+                            }
+                            if (uploadText) uploadText.innerText = "❌ Upload Failed.";
                         } else {
-                            // SUCCESS STATE SCREENSHOT TRIGGER
-                            uploadedTextContent = extractedText;
-                            statusMessage.style.color = 'var(--accent-teal)';
-                            statusMessage.innerHTML = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
-                            uploadText.innerHTML = `✅ <span style="color: var(--accent-teal);">${file.name} Loaded!</span>`;
+                            if (statusMessage) {
+                                statusMessage.style.color = 'var(--accent-teal)';
+                                statusMessage.innerHTML = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
+                            }
+                            if (uploadText) uploadText.innerHTML = `✅ <span style="color: var(--accent-teal);">${file.name} Loaded!</span>`;
                             
+                            // FORCE TEXT POPULATION: Ensure text drops straight into your text field container!
                             if (textareaField) {
-                                textareaField.value = uploadedTextContent.substring(0, 500) + "\n... [Remaining text uploaded successfully from file] ...";
+                                textareaField.value = uploadedTextContent;
                             }
                         }
                     }
-                }, 100); // Speed controls the simulation interval timing
+                }, 80);
             };
 
             reader.onerror = function() {
-                progressWrapper.style.display = 'none';
-                statusMessage.style.display = 'block';
-                statusMessage.style.color = 'var(--accent-pink)';
-                statusMessage.innerText = "❌ FAILURE: Error running raw file parser stream reader.";
-                uploadText.innerText = "❌ Error reading file.";
+                if (progressWrapper) progressWrapper.style.display = 'none';
+                if (statusMessage) {
+                    statusMessage.style.display = 'block';
+                    statusMessage.style.color = 'var(--accent-pink)';
+                    statusMessage.innerText = "❌ FAILURE: Error running raw file parser stream reader.";
+                }
+                if (uploadText) uploadText.innerText = "❌ Error reading file.";
             };
 
+            // This line reads the actual file data bytes from your computer
             reader.readAsText(file);
         });
     }
-
         // --- GEMINI API ENGINE ---
         if (generateBtn) {
             generateBtn.addEventListener('click', async () => {
