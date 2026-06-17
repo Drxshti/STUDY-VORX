@@ -161,7 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
             generateBtn.addEventListener('click', async () => {
                 let textContent = textareaField ? textareaField.value.trim() : '';
                 
-                if (!textContent || textContent.startsWith("... [Remaining text")) {
+                // FIXED BUG B: changed startsWith to includes
+                if (!textContent || textContent.includes("... [Remaining text")) {
                     textContent = uploadedTextContent;
                 }
 
@@ -184,7 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     // CRITICAL: Replace with your actual API key
                     const GEMINI_API_KEY = 'YOUR_SECRET_GOOGLE_API_KEY';
-                    const GEMINI_URL = `https://generatetheme.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                    
+                    // FIXED BUG A: Updated endpoint url to generativelanguage
+                    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
                     const promptInstruction = `
                     You are an elite exam generation engine. Analyze the provided study text and create a custom evaluation set.
