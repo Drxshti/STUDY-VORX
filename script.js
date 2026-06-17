@@ -37,10 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('theme', newTheme);
         });
     }
-
-    // ==========================================
+// ==========================================
     // TASK 1: LOGIN AUTHENTICATION SIMULATOR
     // ==========================================
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('usernameInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginStatus = document.getElementById('loginStatus');
+
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             // 1. Prevent the browser from refreshing the page blindly
@@ -54,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pass.length < 6) {
                 loginStatus.style.display = 'block';
                 loginStatus.style.color = 'var(--accent-pink)';
-                loginStatus.innerText = "❌ Password must be at least 6 characters.";
+                loginStatus.innerText = "❌ ERROR: Password must be at least 6 characters.";
                 return;
             }
 
@@ -67,13 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             /* * IN A REAL APP, THIS IS WHERE THE FETCH REQUEST HAPPENS:
-             * fetch('https://api.studyvorx.com/v1/login', {
+             * fetch('https://api.yourbackend.com/v1/login', {
              * method: 'POST',
              * body: JSON.stringify({ username: user, password: pass })
              * });
              */
         });
     }
+    
 
     // ==========================================
     // UNIFIED FILE UPLOAD & SIMULATED PROGRESS UI
