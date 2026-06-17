@@ -99,40 +99,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+  // ==========================================
+    // 4. MAIN APP LOGIC — FILE UPLOAD ENGINE
     // ==========================================
-    // 4. MAIN APP LOGIC (index.html)
-    // ==========================================
-    if (!isLoginPage) {
-        
-        // --- FILE UPLOAD ENGINE ---
-        if (fileInput) {
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
+    if (!isLoginPage && fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-                progressWrapper.style.display = 'block';
-                statusMessage.style.display = 'none';
-                progressBar.style.width = '0%';
-                progressPercent.innerText = '0% TRANSMITTED';
-                uploadText.innerText = `READING: ${file.name}...`;
+            // 1. Initial State: Show progress bar wrapper, clear past messages
+            progressWrapper.style.display = 'block';
+            statusMessage.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressPercent.innerText = '0% TRANSMITTED';
+            uploadText.innerText = `READING: ${file.name}...`;
 
-                const reader = new FileReader();
-                
-                reader.onload = function(evt) {
-                    const extractedText = evt.target.result;
+            const reader = new FileReader();
+            
+            reader.onload = function(evt) {
+                const extractedText = evt.target.result;
+                let progress = 0;
 
-                    let progress = 0;
-                    const uploadSimulation = setInterval(() => {
-                        progress += 20;
-                        progressBar.style.width = `${progress}%`;
-                        progressPercent.innerText = `${progress}% TRANSMITTED`;
+                // 2. Progress State: Animate the bar incrementally
+                // SNAPSHOT POINT: Take your progress bar screenshot while this is moving!
+                const uploadSimulation = setInterval(() => {
+                    progress += 20; // Climbs smoothly by 20% each step
+                    progressBar.style.width = `${progress}%`;
+                    progressPercent.innerText = `${progress}% TRANSMITTED`;
 
-                        if (progress >= 100) {
-                            clearInterval(uploadSimulation);
-                            
+                    if (progress >= 100) {
+                        clearInterval(uploadSimulation);
+                        progressWrapper.style.display = 'none'; // Hide bar when finished
+                        statusMessage.style.display = 'block';  // Reveal final message status
+                        
+                        // 3. Conditional Testing Branch for Success vs Failure triggers
+                        if (file.name.toLowerCase() === 'fail.txt') {
+                            // FAILURE STATE SCREENSHOT TRIGGER
+                            statusMessage.style.color = 'var(--accent-pink)';
+                            statusMessage.innerText = `❌ FAILURE: File [${file.name}] size threshold overflow or corrupted parameters.`;
+                            uploadText.innerText = "❌ Upload Failed.";
+                        } else {
+                            // SUCCESS STATE SCREENSHOT TRIGGER
                             uploadedTextContent = extractedText;
-                            progressWrapper.style.display = 'none';
-                            statusMessage.style.display = 'block';
                             statusMessage.style.color = 'var(--accent-teal)';
                             statusMessage.innerHTML = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
                             uploadText.innerHTML = `✅ <span style="color: var(--accent-teal);">${file.name} Loaded!</span>`;
@@ -141,20 +149,21 @@ document.addEventListener('DOMContentLoaded', () => {
                                 textareaField.value = uploadedTextContent.substring(0, 500) + "\n... [Remaining text uploaded successfully from file] ...";
                             }
                         }
-                    }, 100);
-                };
+                    }
+                }, 100); // Speed controls the simulation interval timing
+            };
 
-                reader.onerror = function() {
-                    progressWrapper.style.display = 'none';
-                    statusMessage.style.display = 'block';
-                    statusMessage.style.color = 'var(--accent-pink)';
-                    statusMessage.innerText = "❌ FAILURE: Error reading file.";
-                    uploadText.innerText = "❌ Error reading file.";
-                };
+            reader.onerror = function() {
+                progressWrapper.style.display = 'none';
+                statusMessage.style.display = 'block';
+                statusMessage.style.color = 'var(--accent-pink)';
+                statusMessage.innerText = "❌ FAILURE: Error running raw file parser stream reader.";
+                uploadText.innerText = "❌ Error reading file.";
+            };
 
-                reader.readAsText(file);
-            });
-        }
+            reader.readAsText(file);
+        });
+    }
 
         // --- GEMINI API ENGINE ---
         if (generateBtn) {
