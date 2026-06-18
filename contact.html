@@ -23,41 +23,57 @@
         </nav>
     </header>
 
-    <main class="main-container center-layout">
-        <div class="panel-box combined-contact-box">
+    <main class="main-container center-layout" style="padding: 40px 20px;">
+        <div class="panel-box combined-contact-box" style="width: 100%; max-width: 900px;">
             <div class="panel-header bg-purple">
                 <span>[COMMUNICATION_MATRIX]</span>
                 <span>V1.0</span>
             </div>
             
-            <div class="panel-body contact-grid">
+            <div class="panel-body contact-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+                
                 <div class="contact-info-side">
-                    <h3 class="section-title text-teal">CONTACT HQ</h3>
+                    <h3 class="section-title text-teal" style="margin-top: 0;">CONTACT HQ</h3>
                     <p class="paragraph-text">Have questions, bugs to report, or core updates to request? Reach out directly through our node lines.</p>
                     
-                    <div class="retro-divider"></div>
+                    <div class="retro-divider" style="height: 2px; background: var(--border-color); margin: 20px 0;"></div>
                     
-                    <div class="contact-meta">
-                        <p><strong>EMAIL:</strong> support@studyvorx.com</p>
-                        <p><strong>SYSTEM STATUS:</strong> <span class="text-teal">OPERATIONAL</span></p>
-                        <p><strong>RESPONSE TIME:</strong> &lt; 24 HOURS</p>
+                    <div class="contact-meta paragraph-text">
+                        <p style="margin-bottom: 10px;"><strong>EMAIL:</strong> support@studyvorx.com</p>
+                        <p style="margin-bottom: 10px;"><strong>SYSTEM STATUS:</strong> <span class="text-teal">OPERATIONAL</span></p>
+                        <p style="margin-bottom: 10px;"><strong>RESPONSE TIME:</strong> &lt; 24 HOURS</p>
                     </div>
                 </div>
 
                 <div class="feedback-form-side">
-                    <h3 class="section-title text-pink">FEEDBACK LOOP</h3>
+                    <h3 class="section-title text-pink" style="margin-top: 0;">FEEDBACK LOOP</h3>
                     
-                    <div class="form-group">
-                        <label>USER ENVELOPE (EMAIL)</label>
-                        <input type="email" class="input-field" placeholder="yourname@domain.com">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>FEEDBACK METRIC TRANSMISSION</label>
-                        <textarea class="textarea-field" placeholder="Drop your suggestions, bug discoveries, or feature requests here..."></textarea>
-                    </div>
-                    
-                    <button class="btn-action btn-teal-accent">TRANSMIT FEEDBACK</button>
+                    <form id="contactForm" onsubmit="event.preventDefault();">
+                        
+                        <div class="form-group">
+                            <label>OPERATOR NAME</label>
+                            <input type="text" id="contactName" class="input-field" placeholder="Enter your name">
+                        </div>
+
+                        <div class="form-group">
+                            <label>USER ENVELOPE (EMAIL)</label>
+                            <input type="email" id="contactEmail" class="input-field" placeholder="yourname@domain.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>FEEDBACK METRIC TRANSMISSION</label>
+                            <textarea id="contactMessage" class="textarea-field" placeholder="Drop your suggestions, bug discoveries, or feature requests here..." style="min-height: 120px;"></textarea>
+                        </div>
+                        
+                        <div id="contactError" class="status-alert" style="display: none; background-color: #000; color: var(--accent-pink); border: 3px solid var(--border-color); margin-bottom: 15px; padding: 10px; font-size: 13px; font-weight: bold;">
+                            ❌ ERROR: All fields must be filled out before transmission.
+                        </div>
+                        <div id="contactSuccess" class="status-alert" style="display: none; background-color: #000; color: var(--accent-teal); border: 3px solid var(--border-color); margin-bottom: 15px; padding: 10px; font-size: 13px; font-weight: bold;">
+                            ✅ Form submitted successfully.
+                        </div>
+                        
+                        <button type="submit" class="btn-action">TRANSMIT FEEDBACK</button>
+                    </form>
                 </div>
             </div>
         </div>
