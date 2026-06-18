@@ -51,38 +51,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+ // ==========================================
+    // 3. LOGIN PAGE LOGIC & ENTRY CURTAIN
     // ==========================================
-    // 3. LOGIN PAGE LOGIC
-    // ==========================================
-    if (isLoginPage && loginForm) {
-        const usernameInput = document.getElementById('usernameInput');
-        const passwordInput = document.getElementById('passwordInput');
-        const loginStatus = document.getElementById('loginStatus');
+    if (isLoginPage) {
+        
+        // --- STEP 2: ENTRY CURTAIN LOGIC ---
+        const welcomeOverlay = document.getElementById('welcomeOverlay');
+        const welcomeBtn = document.getElementById('welcomeBtn');
+        const welcomeText = document.getElementById('welcomeText');
 
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const user = usernameInput.value.trim();
-            const pass = passwordInput.value;
+        if (welcomeOverlay && welcomeBtn && welcomeText) {
+            // Lock the screen so they can't scroll past the curtain
+            document.body.style.overflow = 'hidden';
 
-            if (pass.length < 6) {
+            welcomeBtn.addEventListener('click', () => {
+                // 1. Hide the button
+                welcomeBtn.style.display = 'none';
+                
+                // 2. Show the "Drishti" message
+                welcomeText.style.display = 'block';
+                
+                // 3. Wait exactly 2.5 seconds for them to read it, then remove the curtain!
+                setTimeout(() => {
+                    welcomeOverlay.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Unlock scrolling
+                }, 2500);
+            });
+        }
+
+        // --- EXISTING: LOGIN FORM LOGIC ---
+        if (loginForm) {
+            const usernameInput = document.getElementById('usernameInput');
+            const passwordInput = document.getElementById('passwordInput');
+            const loginStatus = document.getElementById('loginStatus');
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const user = usernameInput.value.trim();
+                const pass = passwordInput.value;
+
+                if (pass.length < 6) {
+                    loginStatus.style.display = 'block';
+                    loginStatus.style.color = 'var(--accent-pink)';
+                    loginStatus.innerText = "❌ ERROR: Password must be at least 6 characters.";
+                    return;
+                }
+
                 loginStatus.style.display = 'block';
-                loginStatus.style.color = 'var(--accent-pink)';
-                loginStatus.innerText = "❌ ERROR: Password must be at least 6 characters.";
-                return;
-            }
+                loginStatus.style.color = 'var(--accent-teal)';
+                loginStatus.innerHTML = `✅ PAYLOAD SECURED:<br><span style="font-size: 12px; color: var(--text-color);">Authenticating [${user}]...</span>`;
 
-            loginStatus.style.display = 'block';
-            loginStatus.style.color = 'var(--accent-teal)';
-            loginStatus.innerHTML = `✅ PAYLOAD SECURED:<br><span style="font-size: 12px; color: var(--text-color);">Authenticating [${user}]...</span>`;
-
-            setTimeout(() => {
-                sessionStorage.setItem('userLoggedIn', 'true');
-                sessionStorage.setItem('username', user);
-                window.location.replace('index.html'); 
-            }, 1000);
-        });
+                setTimeout(() => {
+                    sessionStorage.setItem('userLoggedIn', 'true');
+                    sessionStorage.setItem('username', user);
+                    window.location.replace('index.html'); 
+                }, 1000);
+            });
+        }
     }
-
     // ==========================================
     // 4. MAIN APP LOGIC — FILE UPLOAD ENGINE (BULLETPROOF)
     // ==========================================
