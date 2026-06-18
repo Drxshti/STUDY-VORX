@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STUDYVORX — Contact</title>
+    <title>STUDYVORX — Support & FAQ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,13 +17,14 @@
             <a href="login.html">Login</a>
             <a href="index.html">Home</a>
             <a href="about.html">About Us</a>
-            <a href="contact.html" class="active-link">Contact</a>
+            <a href="contact.html" class="active-link">Contact & FAQ</a>
             
             <button class="btn btn-shift">Shift Mode</button>
         </nav>
     </header>
 
-    <main class="main-container center-layout" style="padding: 40px 20px;">
+    <main class="main-container center-layout" style="padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 40px; min-height: 80vh;">
+        
         <div class="panel-box combined-contact-box" style="width: 100%; max-width: 900px;">
             <div class="panel-header bg-purple">
                 <span>[COMMUNICATION_MATRIX]</span>
@@ -49,7 +50,6 @@
                     <h3 class="section-title text-pink" style="margin-top: 0;">FEEDBACK LOOP</h3>
                     
                     <form id="contactForm" onsubmit="event.preventDefault();">
-                        
                         <div class="form-group">
                             <label>OPERATOR NAME</label>
                             <input type="text" id="contactName" class="input-field" placeholder="Enter your name">
@@ -57,7 +57,7 @@
 
                         <div class="form-group">
                             <label>USER ENVELOPE (EMAIL)</label>
-                            <input type="email" id="contactEmail" class="input-field" placeholder="yourname@domain.com">
+                            <input type="email" id="contactEmail" class="input-field" placeholder="operator@studyvorx.com">
                         </div>
                         
                         <div class="form-group">
@@ -77,6 +77,57 @@
                 </div>
             </div>
         </div>
+
+        <section class="panel-box" style="width: 100%; max-width: 900px;">
+            <div class="panel-header bg-teal">
+                <span>[DATA_QUERY_FAQ]</span>
+                <span>INDEX</span>
+            </div>
+            <div class="panel-body">
+                
+                <div style="border: 3px solid var(--border-color); margin-bottom: 15px; background: var(--container-bg);">
+                    <button class="faq-question" style="width: 100%; text-align: left; background: transparent; color: var(--text-color); padding: 15px; font-weight: bold; font-family: inherit; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>01. How does the AI crunching actually work?</span>
+                        <span class="faq-icon" style="color: var(--accent-teal);">▼</span>
+                    </button>
+                    <div class="faq-answer" style="display: none; padding: 15px; background: #000; border-top: 3px dashed var(--border-color); font-size: 14px; line-height: 1.6;">
+                        The system parses your raw text uploads and feeds them directly into the Gemini 1.5 neural network. It isolates core definitions, formulas, and concepts to instantly generate targeted revision material.
+                    </div>
+                </div>
+
+                <div style="border: 3px solid var(--border-color); margin-bottom: 15px; background: var(--container-bg);">
+                    <button class="faq-question" style="width: 100%; text-align: left; background: transparent; color: var(--text-color); padding: 15px; font-weight: bold; font-family: inherit; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>02. Are my uploaded files stored permanently?</span>
+                        <span class="faq-icon" style="color: var(--accent-teal);">▼</span>
+                    </button>
+                    <div class="faq-answer" style="display: none; padding: 15px; background: #000; border-top: 3px dashed var(--border-color); font-size: 14px; line-height: 1.6;">
+                        No. StudyVorx processes your data locally in your browser's memory. Once you refresh or close the tab, the uploaded string data is completely wiped from the cache.
+                    </div>
+                </div>
+
+                <div style="border: 3px solid var(--border-color); margin-bottom: 15px; background: var(--container-bg);">
+                    <button class="faq-question" style="width: 100%; text-align: left; background: transparent; color: var(--text-color); padding: 15px; font-weight: bold; font-family: inherit; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>03. What happens if I lose my internet connection?</span>
+                        <span class="faq-icon" style="color: var(--accent-teal);">▼</span>
+                    </button>
+                    <div class="faq-answer" style="display: none; padding: 15px; background: #000; border-top: 3px dashed var(--border-color); font-size: 14px; line-height: 1.6;">
+                        Because generating exams requires pinging an external API endpoint, an active connection is mandatory. If it drops, the system will trigger a red API ERROR alert on your monitor.
+                    </div>
+                </div>
+
+                <div style="border: 3px solid var(--border-color); background: var(--container-bg);">
+                    <button class="faq-question" style="width: 100%; text-align: left; background: transparent; color: var(--text-color); padding: 15px; font-weight: bold; font-family: inherit; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>04. Can I export the generated flashcards?</span>
+                        <span class="faq-icon" style="color: var(--accent-teal);">▼</span>
+                    </button>
+                    <div class="faq-answer" style="display: none; padding: 15px; background: #000; border-top: 3px dashed var(--border-color); font-size: 14px; line-height: 1.6;">
+                        Export functionality is currently slated for V2.0. For now, you can copy the generated JSON strings directly from the Crunch Feed Monitor and paste them into your favorite text editor.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
     <script src="script.js"></script>
