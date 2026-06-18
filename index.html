@@ -33,9 +33,15 @@
                 <div class="panel-body">
                     <form id="crunchForm" onsubmit="event.preventDefault();">
                         
-                <div class="form-group">
-                    <label>Upload Revision Material</label>
-                    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                        <div class="form-group" style="border-bottom: 2px dashed var(--border-color); padding-bottom: 20px; margin-bottom: 20px;">
+                            <button id="welcomeBtn" class="btn-action bg-purple">Click Me</button>
+                            
+                            <div id="welcomeMessage" class="status-alert text-teal" style="display: none; margin-top: 15px; text-align: center; font-size: 16px;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload Revision Material</label>
+                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
                          <span class="retro-folder">📁</span>
                          <span id="uploadText">Click to Drop PDF, PPT or Notes Text</span>
                          <input type="file" id="fileInput" accept=".txt,.md" style="display: none;">
