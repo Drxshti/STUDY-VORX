@@ -133,6 +133,7 @@ nav a:hover, .active-link {
 
 .btn-action {
     width: 100%;
+    max-width: 100%; /* Safety lock */
     background-color: var(--accent-pink);
     color: #ffffff;
     font-size: 16px;
@@ -156,7 +157,10 @@ nav a:hover, .active-link {
 .dashboard-grid, .main-container {
     display: flex;
     flex-direction: row; 
+    flex-wrap: wrap; /* Allows panels to neatly stack if screen is too narrow */
     width: 100%;
+    max-width: 1300px; /* Prevents stretching too wide on big monitors */
+    margin: 0 auto; /* Centers the entire dashboard perfectly */
     padding: 25px;       
     gap: 25px;           
     align-items: flex-start;
@@ -168,8 +172,9 @@ nav a:hover, .active-link {
     box-shadow: var(--neo-shadow);
     margin-bottom: 30px;
     overflow: hidden;
-    flex: 1;             
+    flex: 1 1 350px; /* Makes sure boxes wrap if they get smaller than 350px */
     min-width: 0;        
+    max-width: 100%; /* Safety lock */
 }
 
 /* Mobile responsive crash protection */
@@ -204,12 +209,14 @@ nav a:hover, .active-link {
     justify-content: center;
     gap: 12px;
     width: 100%;
+    max-width: 100%;
 }
 
 .retro-folder { font-size: 36px; }
 
 .input-field, .select-field, .textarea-field {
     width: 100%;
+    max-width: 100%; /* Safety lock prevents text boxes from breaking out */
     padding: 12px;
     border: 3px solid var(--border-color);
     background-color: var(--container-bg);
@@ -231,6 +238,7 @@ nav a:hover, .active-link {
     justify-content: center;
     text-align: center;
     padding: 30px;
+    max-width: 100%;
 }
 
 .status-alert {
@@ -260,19 +268,20 @@ nav a:hover, .active-link {
 .contact-grid {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap; /* Ensure columns drop down on smaller screens */
     gap: 35px;
     align-items: stretch;
 }
 
 .contact-info-side {
-    flex: 1;
+    flex: 1 1 250px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 }
 
 .feedback-form-side {
-    flex: 1.2; /* Gives the form slightly more breathing room */
+    flex: 1.2 1 300px; /* Gives the form slightly more breathing room */
     display: flex;
     flex-direction: column;
 }
