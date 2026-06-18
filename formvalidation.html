@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Validation</title>
+    <style>
+        /* Basic reset and layout */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Form container styling */
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-container h2 {
+            margin-top: 0;
+            color: #333333;
+            text-align: center;
+        }
+
+        /* Input field styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555555;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensures padding doesn't affect total width */
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        /* Button styling */
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Message box styling */
+        .message-box {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            display: none; /* Hidden by default */
+            font-weight: bold;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block; /* Show when class is added */
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block; /* Show when class is added */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Contact Us</h2>
+        <form id="contactForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email">
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" placeholder="Enter your message"></textarea>
+            </div>
+            
+            <button type="submit">Submit</button>
+        </form>
+
+        <div id="statusMessage" class="message-box"></div>
+    </div>
+
+    <script>
+        // Select the form and listen for the submit event
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            // Prevent the default behavior of page reloading on form submission
+            event.preventDefault();
+
+            // Retrieve and trim values from the input fields
+            const nameValue = document.getElementById('name').value.trim();
+            const emailValue = document.getElementById('email').value.trim();
+            const messageValue = document.getElementById('message').value.trim();
+            
+            // Select the message box element
+            const statusMessage = document.getElementById('statusMessage');
+
+            // Reset the message box classes before running validation
+            statusMessage.className = 'message-box';
+
+            // Check if any of the fields are empty
+            if (nameValue === '' || emailValue === '' || messageValue === '') {
+                // Show error state
+                statusMessage.textContent = 'Error: Please fill out all fields.';
+                statusMessage.classList.add('error');
+            } else {
+                // Show success state
+                statusMessage.textContent = 'Form submitted successfully';
+                statusMessage.classList.add('success');
+                
+                // Clear the form fields after successful submission
+                document.getElementById('contactForm').reset();
+            }
+        });
+    </script>
+
+</body>
+</html>
