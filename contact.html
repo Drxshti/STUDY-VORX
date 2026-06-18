@@ -18,7 +18,6 @@
             <a href="index.html">Home</a>
             <a href="about.html">About Us</a>
             <a href="contact.html" class="active-link">Contact & FAQ</a>
-            
             <button class="btn btn-shift">Shift Mode</button>
         </nav>
     </header>
@@ -36,13 +35,10 @@
             
             <div class="panel-body contact-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
                 
-                <!-- LEFT SIDE: SYSTEM HQ INFO -->
                 <div class="contact-info-side">
                     <h3 class="section-title text-teal" style="margin-top: 0;">CONTACT HQ</h3>
                     <p class="paragraph-text">Have questions, bugs to report, or core updates to request? Reach out directly through our node lines.</p>
-                    
                     <div class="retro-divider" style="height: 2px; background: var(--border-color); margin: 20px 0;"></div>
-                    
                     <div class="contact-meta paragraph-text">
                         <p style="margin-bottom: 10px;"><strong>EMAIL:</strong> support@studyvorx.com</p>
                         <p style="margin-bottom: 10px;"><strong>SYSTEM STATUS:</strong> <span class="text-teal">OPERATIONAL</span></p>
@@ -50,33 +46,27 @@
                     </div>
                 </div>
 
-                <!-- RIGHT SIDE: INTERACTIVE VALIDATION FORM -->
                 <div class="feedback-form-side">
                     <h3 class="section-title text-pink" style="margin-top: 0;">FEEDBACK LOOP</h3>
-                    
                     <form id="contactForm" onsubmit="event.preventDefault();">
                         <div class="form-group">
                             <label>OPERATOR NAME</label>
                             <input type="text" id="contactName" class="input-field" placeholder="Enter your name">
                         </div>
-
                         <div class="form-group">
                             <label>USER ENVELOPE (EMAIL)</label>
                             <input type="email" id="contactEmail" class="input-field" placeholder="operator@studyvorx.com">
                         </div>
-                        
                         <div class="form-group">
                             <label>FEEDBACK METRIC TRANSMISSION</label>
                             <textarea id="contactMessage" class="textarea-field" placeholder="Drop your suggestions, bug discoveries, or feature requests here..." style="min-height: 120px;"></textarea>
                         </div>
-                        
                         <div id="contactError" class="status-alert" style="display: none; background-color: #000; color: var(--accent-pink); border: 3px solid var(--border-color); margin-bottom: 15px; padding: 10px; font-size: 13px; font-weight: bold;">
                             ❌ ERROR: All fields must be filled out before transmission.
                         </div>
                         <div id="contactSuccess" class="status-alert" style="display: none; background-color: #000; color: var(--accent-teal); border: 3px solid var(--border-color); margin-bottom: 15px; padding: 10px; font-size: 13px; font-weight: bold;">
                             ✅ Form submitted successfully.
                         </div>
-                        
                         <button type="submit" class="btn-action">TRANSMIT FEEDBACK</button>
                     </form>
                 </div>
@@ -84,7 +74,7 @@
         </div>
 
         <!-- ==========================================
-             FAQ ACCORDION SECTION (STARTS CLOSED)
+             FAQ ACCORDION SECTION 
              ========================================== -->
         <section class="panel-box" style="width: 100%; max-width: 900px;">
             <div class="panel-header bg-teal">
@@ -143,5 +133,26 @@
     </main>
 
     <script src="script.js"></script>
+
+    <!-- DIRECT INLINE SCRIPT FOR FAQ SO IT NEVER FAILS -->
+    <script>
+        const faqs = document.querySelectorAll('.faq-question');
+        faqs.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('.faq-icon');
+
+                if (answer.style.display === 'block') {
+                    answer.style.display = 'none';
+                    icon.innerText = '▼'; 
+                    icon.style.color = 'var(--accent-teal)';
+                } else {
+                    answer.style.display = 'block';
+                    icon.innerText = '▲'; 
+                    icon.style.color = 'var(--accent-pink)'; 
+                }
+            });
+        });
+    </script>
 </body>
 </html>
