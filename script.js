@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const quantitySelect = document.querySelector('.quantity-select');
     const monitorDisplay = document.querySelector('.monitor-display');
     const shiftBtn = document.querySelector('.btn-shift');
+    const progressPercent = document.getElementById('progressPercent');
+    const statusMessage = document.getElementById('uploadStatusMessage');
     
     const fileInput = document.getElementById('fileInput');
     const uploadText = document.getElementById('uploadText');
@@ -17,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById('progressBar');
     const progressPercent = document.getElementById('progressPercent');
     const statusMessage = document.getElementById('uploadStatusMessage');
+    const welcomeBtn = document.getElementById('welcomeBtn');
+    const welcomeMessage = document.getElementById('welcomeMessage');
 
     let uploadedTextContent = ""; 
 
@@ -85,6 +89,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 4. MAIN APP LOGIC — FILE UPLOAD ENGINE (BULLETPROOF)
     // ==========================================
+    // --- Welcome Button Logic ---
+       // --- Welcome Button Logic ---
+    if (welcomeBtn && welcomeMessage) {
+        welcomeBtn.addEventListener('click', () => {
+            // Retrieve the exact username they typed during the login screen!
+            const activeUser = sessionStorage.getItem('username') || 'Operator';
+            
+            // Reveal the message box and insert the text dynamically
+            welcomeMessage.style.display = 'block';
+            welcomeMessage.innerText = `Welcome to my website, ${activeUser}!`;
+        });
+    }
     if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
