@@ -62,22 +62,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const welcomeText = document.getElementById('welcomeText');
 
         if (welcomeOverlay && welcomeBtn && welcomeText) {
-            // Lock the screen so they can't scroll past the curtain
-            document.body.style.overflow = 'hidden';
+            // Check if the user has already seen the welcome screen this session
+            if (sessionStorage.getItem('welcomeShown') === 'true') {
+                // If they have, immediately hide the overlay and allow scrolling
+                welcomeOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            } else {
+                // Lock the screen so they can't scroll past the curtain
+                document.body.style.overflow = 'hidden';
 
-            welcomeBtn.addEventListener('click', () => {
-                // 1. Hide the button
-                welcomeBtn.style.display = 'none';
-                
-                // 2. Show the "Drishti" message
-                welcomeText.style.display = 'block';
-                
-                // 3. Wait exactly 2.5 seconds for them to read it, then remove the curtain!
-                setTimeout(() => {
-                    welcomeOverlay.style.display = 'none';
-                    document.body.style.overflow = 'auto'; // Unlock scrolling
-                }, 2500);
-            });
+                welcomeBtn.addEventListener('click', () => {
+                    // 1. Hide the button
+                    welcomeBtn.style.display = 'none';
+                    
+                    // 2. Show the "Drishti" message
+                    welcomeText.style.display = 'block';
+                    
+                    // 3. Save to browser memory so it doesn't show again this session
+                    sessionStorage.setItem('welcomeShown', 'true');
+                    
+                    // 4. Wait exactly 2.5 seconds for them to read it, then remove the curtain!
+                    setTimeout(() => {
+                        welcomeOverlay.style.display = 'none';
+                        document.body.style.overflow = 'auto'; // Unlock scrolling
+                    }, 2500);
+                });
+            }
         }
 
         // --- EXISTING: LOGIN FORM LOGIC ---
