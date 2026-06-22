@@ -22,16 +22,30 @@ document.addEventListener('DOMContentLoaded', () => {
     let uploadedTextContent = ""; 
 
     // ==========================================
-    // 1. SMART ROUTING & GATEKEEPER (FIXED)
+    // 1. SMART ROUTING & GATEKEEPER (OPTIONAL LOGIN)
     // ==========================================
     const isAuthenticated = sessionStorage.getItem('userLoggedIn');
     const isLoginPage = loginForm !== null;
 
-    // We removed the harsh "return;" statements that were breaking the script execution thread
-    if (!isAuthenticated && !isLoginPage) {
-        window.location.replace('login.html');
-    }
+    // ❌ REMOVED: The code that forces unauthenticated users to login.html has been deleted.
+    // Users can now freely click Home, About Us, Contact, and index.html without logging in.
 
+    // ✅ KEPT: If they DO choose to log in, this prevents them from accidentally 
+    // going back to the login screen while their session is active.
+    if (isAuthenticated && isLoginPage) {
+        window.location.replace('index.html');
+    }
+   // ==========================================
+    // 1. SMART ROUTING & GATEKEEPER (OPTIONAL LOGIN)
+    // ==========================================
+    const isAuthenticated = sessionStorage.getItem('userLoggedIn');
+    const isLoginPage = loginForm !== null;
+
+    // ❌ REMOVED: The code that forces unauthenticated users to login.html has been deleted.
+    // Users can now freely click Home, About Us, Contact, and index.html without logging in.
+
+    // ✅ KEPT: If they DO choose to log in, this prevents them from accidentally 
+    // going back to the login screen while their session is active.
     if (isAuthenticated && isLoginPage) {
         window.location.replace('index.html');
     }
