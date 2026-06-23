@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyVorx // Last-Minute Exam Crunch</title>
     <link rel="stylesheet" href="style.css">
+    
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1435.0.min.js"></script>
 </head>
 <body>
 
@@ -31,26 +33,26 @@
                     <span>V1.0</span>
                 </div>
                 
-                             <div id="welcomeMessage" class="status-alert text-teal" style="display: none; margin-top: 15px; text-align: center; font-size: 16px;"></div>
+                <div class="panel-body">
+                    
+                    <div id="welcomeMessage" class="status-alert text-teal" style="display: none; margin-bottom: 15px; text-align: center; font-size: 16px;"></div>
+
+                    <form onsubmit="event.preventDefault();">
+                        
+                        <div class="form-group" style="border: 2px dashed var(--border-color); padding: 15px; background: #000; margin-bottom: 25px;">
+                            <label class="text-pink">SECURE AWS UPLOAD</label>
+                            
+                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('awsFileInput').click()" style="margin-top: 10px;">
+                                <span class="retro-folder">📁</span>
+                                <span id="uploadText">Click to Select PDF, DOC, DOCX, or TXT</span>
+                                <input type="file" id="awsFileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+                            </div>
+
+                            <div id="awsUploadStatus" class="status-alert" style="display: none; background-color: #121016; border: 3px solid var(--border-color); margin-top: 15px; padding: 10px; font-size: 13px; font-weight: bold; text-align: center;">
+                                </div>
+
+                            <button type="button" id="awsUploadBtn" class="btn-action" style="margin-top: 15px; background-color: var(--accent-teal); color: #000;">⬆ TRANSMIT TO AWS S3</button>
                         </div>
-
-                        <div class="form-group">
-                            <label>Upload Revision Material</label>
-                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                         <span class="retro-folder">📁</span>
-                         <span id="uploadText">Click to Drop PDF, PPT or Notes Text</span>
-                         <input type="file" id="fileInput" accept=".txt,.md" style="display: none;">
-                    </div>
-
-                    <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
-                        <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
-                          <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
-                        </div>
-                        <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace;">0% TRANSMITTED</div>
-                    </div>
-
-                     <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none; font-size: 13px; font-weight: bold;"></div>
-                   </div>
 
                         <div class="form-group">
                             <label>Or Paste Material Content Data</label>
