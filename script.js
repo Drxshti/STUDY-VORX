@@ -285,3 +285,80 @@ document.addEventListener('DOMContentLoaded', () => {
         monitorDisplay.appendChild(listContainer);
     }
 });
+
+// ==========================================
+    // 6. AWS S3 UPLOAD ENGINE
+    // ==========================================
+    const awsFileInput = document.getElementById('awsFileInput');
+    const awsUploadBtn = document.getElementById('awsUploadBtn');
+    const awsUploadStatus = document.getElementById('awsUploadStatus');
+
+    if (awsUploadBtn) {
+        // 1. Configure AWS Credentials (Uses Cognito for secure, serverless access)
+        AWS.config.region = 'us-east-1'; // Change to your AWS Region
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: 'YOUR_COGNITO_IDENTITY_POOL_ID', // Get this from AWS Console
+        });
+
+        // 2. Initialize the S3 Bucket connection
+        const s3 = new AWS.S3({
+            apiVersion: '2006-03-01',
+            params: { Bucket: 'YOUR_S3_BUCKET_NAME' } // Get this from AWS Console
+        });
+
+        awsUploadBtn.addEventListener('click', () => {
+            const file = awsFileInput.files[0];
+
+            // Reset status box
+            awsUploadStatus.style.display = 'block';
+            awsUploadStatus.style.color = 'var(--text-color)';
+            
+            // Check 1: Did they select a file?
+            if (!file) {
+                awsUploadStatus.style.color = 'var(--accent-pink)';
+                awsUploadStatus.innerText = "❌ ERROR: No document detected. Please select a file.";
+                return;
+            }
+
+            // Check 2: Is it the correct file type?
+            const allowedExtensions = ['pdf', 'doc', 'docx', 'txt'];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            
+            if (!allowedExtensions.includes(fileExtension)) {
+                awsUploadStatus.style.color = 'var(--accent-pink)';
+                awsUploadStatus.innerText = "❌ ERROR: Invalid format. Only PDF, DOC, DOCX, and TXT are permitted.";
+                return;
+            }
+
+            // Begin Upload Process
+            awsUploadStatus.style.color = 'var(--accent-teal)';
+            awsUploadStatus.innerText = "⏳ Initiating AWS uplink... 0%";
+
+            // 3. Construct the upload payload
+            const upload = new AWS.S3.ManagedUpload({
+                params: {
+                    Bucket: 'YOUR_S3_BUCKET_NAME',
+                    Key: `uploads/${Date.now()}_${file.name}`, // Adds timestamp to prevent overwriting files with the same name
+                    Body: file
+                }
+            });
+
+            // 4. Track Live Progress
+            upload.on('httpUploadProgress', function(evt) {
+                const progressPercentage = Math.round((evt.loaded * 100) / evt.total);
+                awsUploadStatus.innerText = `⏳ Uploading data... ${progressPercentage}%`;
+            });
+
+            // 5. Send to Cloud and Handle Response
+            upload.send(function(err, data) {
+                if (err) {
+                    awsUploadStatus.style.color = 'var(--accent-pink)';
+                    awsUploadStatus.innerText = `❌ UPLOAD FAILED: ${err.message}`;
+                } else {
+                    awsUploadStatus.style.color = 'var(--accent-teal)';
+                    awsUploadStatus.innerText = `✅ Upload completed successfully. Document secured in AWS S3.`;
+                    awsFileInput.value = ""; // Clear the file input box
+                }
+            });
+        });
+    }
