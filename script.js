@@ -289,76 +289,104 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
     // 6. AWS S3 UPLOAD ENGINE
     // ==========================================
+   document.addEventListener("DOMContentLoaded", () => {
+    // 1. Hook into the HTML elements
     const awsFileInput = document.getElementById('awsFileInput');
     const awsUploadBtn = document.getElementById('awsUploadBtn');
     const awsUploadStatus = document.getElementById('awsUploadStatus');
 
     if (awsUploadBtn) {
-        // 1. Configure AWS Credentials (Uses Cognito for secure, serverless access)
-        AWS.config.region = 'us-east-1'; // Change to your AWS Region
+        // --- FEATURE: Upload to AWS Storage ---
+        // Configure AWS Credentials (Temporary secure access)
+        AWS.config.region = 'us-east-1'; // e.g., 'us-east-1'
         AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-            IdentityPoolId: 'YOUR_COGNITO_IDENTITY_POOL_ID', // Get this from AWS Console
+            IdentityPoolId: 'YOUR_COGNITO_IDENTITY_POOL_ID', 
         });
 
-        // 2. Initialize the S3 Bucket connection
         const s3 = new AWS.S3({
             apiVersion: '2006-03-01',
-            params: { Bucket: 'YOUR_S3_BUCKET_NAME' } // Get this from AWS Console
+            params: { Bucket: 'YOUR_S3_BUCKET_NAME' }
         });
 
-        awsUploadBtn.addEventListener('click', () => {
-            const file = awsFileInput.files[0];
-
-            // Reset status box
-            awsUploadStatus.style.display = 'block';
-            awsUploadStatus.style.color = 'var(--text-color)';
+        awsUploadBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
             
-            // Check 1: Did they select a file?
-            if (!file) {
+            // --- FEATURE: Show error if no file selected ---
+            if (!awsFileInput || !awsFileInput.files.length) {
+                awsUploadStatus.style.display = 'block';
                 awsUploadStatus.style.color = 'var(--accent-pink)';
                 awsUploadStatus.innerText = "❌ ERROR: No document detected. Please select a file.";
                 return;
             }
 
-            // Check 2: Is it the correct file type?
+            const file = awsFileInput.files[0];
+            
+            // --- FEATURE: Allowed File Types (PDF, DOC, DOCX, TXT) ---
             const allowedExtensions = ['pdf', 'doc', 'docx', 'txt'];
             const fileExtension = file.name.split('.').pop().toLowerCase();
             
             if (!allowedExtensions.includes(fileExtension)) {
+                awsUploadStatus.style.display = 'block';
                 awsUploadStatus.style.color = 'var(--accent-pink)';
                 awsUploadStatus.innerText = "❌ ERROR: Invalid format. Only PDF, DOC, DOCX, and TXT are permitted.";
                 return;
             }
 
-            // Begin Upload Process
+            // --- FEATURE: Show Loading Message ---
+            awsUploadStatus.style.display = 'block';
             awsUploadStatus.style.color = 'var(--accent-teal)';
             awsUploadStatus.innerText = "⏳ Initiating AWS uplink... 0%";
 
-            // 3. Construct the upload payload
+            // Package the file for AWS
             const upload = new AWS.S3.ManagedUpload({
                 params: {
                     Bucket: 'YOUR_S3_BUCKET_NAME',
-                    Key: `uploads/${Date.now()}_${file.name}`, // Adds timestamp to prevent overwriting files with the same name
+                    Key: `uploads/${Date.now()}_${file.name}`,
                     Body: file
                 }
             });
 
-            // 4. Track Live Progress
+            // --- FEATURE: Show Upload Progress ---
             upload.on('httpUploadProgress', function(evt) {
                 const progressPercentage = Math.round((evt.loaded * 100) / evt.total);
                 awsUploadStatus.innerText = `⏳ Uploading data... ${progressPercentage}%`;
             });
 
-            // 5. Send to Cloud and Handle Response
+            // Send to AWS
             upload.send(function(err, data) {
                 if (err) {
+                    // --- FEATURE: Show Error Message if Upload Fails ---
                     awsUploadStatus.style.color = 'var(--accent-pink)';
                     awsUploadStatus.innerText = `❌ UPLOAD FAILED: ${err.message}`;
                 } else {
+                    // --- FEATURE: Show Success Message ---
                     awsUploadStatus.style.color = 'var(--accent-teal)';
                     awsUploadStatus.innerText = `✅ Upload completed successfully. Document secured in AWS S3.`;
-                    awsFileInput.value = ""; // Clear the file input box
+                    awsFileInput.value = ""; // Clear the box for the next upload
                 }
             });
         });
     }
+});
+Step 2: The Interface (index.html)
+To make sure those JavaScript hooks actually work, verify that your HTML in index.html looks exactly like this. Notice how the accept attribute handles the file types, and the IDs perfectly match the script!
+
+HTML
+<section class="panel-box">
+    <div class="panel-header bg-teal">
+        <span>[AWS_S3_UPLOADER]</span>
+        <span>SECURE</span>
+    </div>
+    <div class="panel-body">
+        <h3 class="section-title text-pink" style="margin-top: 0;">DOCUMENT INGESTION</h3>
+        
+        <div class="form-group">
+            <label>SELECT TARGET FILE (PDF, DOC, DOCX, TXT)</label>
+            <input type="file" id="awsFileInput" class="input-field" accept=".pdf,.doc,.docx,.txt" style="padding: 10px; cursor: pointer; width: 100%; box-sizing: border-box;">
+        </div>
+
+        <div id="awsUploadStatus" class="status-alert" style="display: none; background-color: #000; border: 3px solid var(--border-color); margin-bottom: 15px; padding: 10px; font-weight: bold; font-size: 13px;"></div>
+
+        <button id="awsUploadBtn" type="button" class="btn-action" style="background-color: var(--accent-teal); color: #000; width: 100%; cursor: pointer;">UPLOAD TO AWS</button>
+    </div>
+</section>
