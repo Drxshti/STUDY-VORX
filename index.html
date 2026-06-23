@@ -35,21 +35,24 @@
                         <span>[AWS_S3_UPLOADER]</span>
                         <span>SECURE</span>
                     </div>
-                    <div class="panel-body">
-                        <h3 class="section-title text-pink" style="margin-top: 0;">DOCUMENT INGESTION</h3>
-                        
-                        <div class="form-group">
-                            <label>SELECT TARGET FILE (PDF, DOC, DOCX, TXT)</label>
-                            <input type="file" id="awsFileInput" class="input-field" accept=".pdf,.doc,.docx,.txt" style="padding: 10px; cursor: pointer; width: 100%; box-sizing: border-box;">
-                        </div>
+                   <section class="panel-box">
+    <div class="panel-header bg-teal">
+        <span>[AWS_S3_UPLOADER]</span>
+        <span>SECURE</span>
+    </div>
+    <div class="panel-body">
+        <h3 class="section-title text-pink" style="margin-top: 0;">DOCUMENT INGESTION</h3>
+        
+        <div class="form-group">
+            <label>SELECT TARGET FILE (PDF, DOC, DOCX, TXT)</label>
+            <input type="file" id="awsFileInput" class="input-field" accept=".pdf,.doc,.docx,.txt" style="padding: 10px; cursor: pointer; width: 100%; box-sizing: border-box;">
+        </div>
 
-                        <div id="awsUploadStatus" class="status-alert" style="display: none; background-color: #000; border: 3px solid var(--border-color); margin-bottom: 15px; padding: 10px; font-weight: bold; font-size: 13px;">
-                            </div>
+        <div id="awsUploadStatus" class="status-alert" style="display: none; background-color: #000; border: 3px solid var(--border-color); margin-bottom: 15px; padding: 10px; font-weight: bold; font-size: 13px;"></div>
 
-                        <button id="awsUploadBtn" class="btn-action" style="background-color: var(--accent-teal); color: #000; width: 100%;">UPLOAD TO AWS</button>
-                    </div>
-                </section>
-
+        <button id="awsUploadBtn" type="button" class="btn-action" style="background-color: var(--accent-teal); color: #000; width: 100%; cursor: pointer;">UPLOAD TO AWS</button>
+    </div>
+</section>
                 <section class="panel-box">
                     <div class="panel-header bg-purple">
                         <span>[Input_Core]</span>
