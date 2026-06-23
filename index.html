@@ -27,67 +27,76 @@
     <main>
         <div class="dashboard-grid">
             
-            <section class="panel-box">
-                <div class="panel-header bg-purple">
-                    <span>[Input_Core]</span>
-                    <span>V1.0</span>
-                </div>
+            <div style="display: flex; flex-direction: column; gap: 30px;">
                 
-                <div class="panel-body">
-                    
-                    <div id="welcomeMessage" class="status-alert text-teal" style="display: none; margin-bottom: 15px; text-align: center; font-size: 16px;"></div>
-
-                    <form onsubmit="event.preventDefault();">
+                <section class="panel-box">
+                    <div class="panel-header bg-teal">
+                        <span>[AWS_S3_UPLOADER]</span>
+                        <span>SECURE</span>
+                    </div>
+                    <div class="panel-body">
+                        <h3 class="section-title text-pink" style="margin-top: 0;">DOCUMENT INGESTION</h3>
                         
-                        <div class="form-group" style="border: 2px dashed var(--border-color); padding: 15px; background: #000; margin-bottom: 25px;">
-                            <label class="text-pink">SECURE AWS UPLOAD</label>
-                            
-                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('awsFileInput').click()" style="margin-top: 10px;">
-                                <span class="retro-folder">📁</span>
-                                <span id="uploadText">Click to Select PDF, DOC, DOCX, or TXT</span>
-                                <input type="file" id="awsFileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+                        <div class="form-group">
+                            <label>SELECT TARGET FILE (PDF, DOC, DOCX, TXT)</label>
+                            <input type="file" id="awsFileInput" class="input-field" accept=".pdf,.doc,.docx,.txt" style="padding: 10px; cursor: pointer;">
+                        </div>
+
+                        <div id="awsUploadStatus" class="status-alert" style="display: none; background-color: #000; border: 3px solid var(--border-color); margin-bottom: 15px; padding: 10px; font-weight: bold; font-size: 13px;">
                             </div>
 
-                            <div id="awsUploadStatus" class="status-alert" style="display: none; background-color: #121016; border: 3px solid var(--border-color); margin-top: 15px; padding: 10px; font-size: 13px; font-weight: bold; text-align: center;">
-                                </div>
+                        <button id="awsUploadBtn" class="btn-action" style="background-color: var(--accent-teal); color: #000;">UPLOAD TO AWS</button>
+                    </div>
+                </section>
 
-                            <button type="button" id="awsUploadBtn" class="btn-action" style="margin-top: 15px; background-color: var(--accent-teal); color: #000;">⬆ TRANSMIT TO AWS S3</button>
-                        </div>
+                <section class="panel-box">
+                    <div class="panel-header bg-purple">
+                        <span>[Input_Core]</span>
+                        <span>V1.0</span>
+                    </div>
+                    
+                    <div class="panel-body">
+                        
+                        <div id="welcomeMessage" class="status-alert text-teal" style="display: none; margin-bottom: 15px; text-align: center; font-size: 16px;"></div>
 
-                        <div class="form-group">
-                            <label>Or Paste Material Content Data</label>
-                            <textarea class="textarea-field" placeholder="Paste chapters, concept definitions, or raw study metrics here to build your crunch revision sets..."></textarea>
-                        </div>
+                        <form onsubmit="event.preventDefault();">
+                            
+                            <div class="form-group">
+                                <label>Or Paste Material Content Data</label>
+                                <textarea class="textarea-field" placeholder="Paste chapters, concept definitions, or raw study metrics here to build your crunch revision sets..."></textarea>
+                            </div>
 
-                        <div class="form-group">
-                            <label>Target Generation Filter</label>
-                            <select class="select-field filter-select">
-                                <option value="MCQ" selected>Multiple Choice Framework (MCQ)</option>
-                                <option value="VERY_SHORT">Very Short Answer (1 marker)</option>
-                                <option value="SHORT">Short Answer (3 marker)</option>
-                                <option value="LONG">Long Answer (5 marker)</option>
-                                <option value="FLASHCARD">Flashcard Summary Engine</option>
-                                <option value="TRUE_FALSE">True / False Verification Array</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label>Target Generation Filter</label>
+                                <select class="select-field filter-select">
+                                    <option value="MCQ" selected>Multiple Choice Framework (MCQ)</option>
+                                    <option value="VERY_SHORT">Very Short Answer (1 marker)</option>
+                                    <option value="SHORT">Short Answer (3 marker)</option>
+                                    <option value="LONG">Long Answer (5 marker)</option>
+                                    <option value="FLASHCARD">Flashcard Summary Engine</option>
+                                    <option value="TRUE_FALSE">True / False Verification Array</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label>QUANTITY COUNT FILTER</label>
-                            <select class="select-field quantity-select">
-                                <option value="5">5 Questions</option>
-                                <option value="10" selected>10 Questions</option>
-                                <option value="25">25 Questions</option>
-                                <option value="50">50 Questions</option>
-                                <option value="100">100 Questions</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label>QUANTITY COUNT FILTER</label>
+                                <select class="select-field quantity-select">
+                                    <option value="5">5 Questions</option>
+                                    <option value="10" selected>10 Questions</option>
+                                    <option value="25">25 Questions</option>
+                                    <option value="50">50 Questions</option>
+                                    <option value="100">100 Questions</option>
+                                </select>
+                            </div>
 
-                        <button type="button" class="btn btn-action">Generate Crunch Study Set</button>
-                    </form>
-                </div>
-            </section>
+                            <button type="button" class="btn btn-action">Generate Crunch Study Set</button>
+                        </form>
+                    </div>
+                </section>
+                
+            </div>
 
-            <section class="panel-box">
+            <section class="panel-box" style="height: fit-content;">
                 <div class="panel-header bg-teal">
                     <span>Crunch Feed Monitor</span>
                     <span>Ready</span>
