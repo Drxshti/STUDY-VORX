@@ -287,9 +287,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 6. AWS S3 UPLOAD ENGINE (WITH PRESENTATION MODE)
+// 6. FRONTEND UPLOAD SIMULATOR (NO BACKEND)
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Hook into your HTML elements
     const fileInput = document.getElementById('fileInput');
     const uploadText = document.getElementById('uploadText');
     const uploadProgressWrapper = document.getElementById('uploadProgressWrapper');
@@ -298,19 +299,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadStatusMessage = document.getElementById('uploadStatusMessage');
     const awsUploadBtn = document.getElementById('awsUploadBtn');
 
-    // 1. Handle File Selection (Changes text in the folder box)
+    // 2. Handle File Selection
     if (fileInput) {
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
+                // Change text in the folder box to show the file name
                 uploadText.style.color = 'var(--accent-teal)';
                 uploadText.innerText = `SELECTED: ${fileInput.files[0].name}`;
+                
+                // Reset any previous errors or progress bars
                 uploadStatusMessage.style.display = 'none'; 
                 if(uploadProgressWrapper) uploadProgressWrapper.style.display = 'none';
             }
         });
     }
 
-    // 2. Handle The Upload Button Click
+    // 3. Handle The Upload Button Click
     if (awsUploadBtn) {
         awsUploadBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
@@ -344,74 +348,42 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadText.style.color = 'var(--text-color)';
             uploadText.innerText = `READING: ${file.name}...`;
 
-            const bucketName = 'YOUR_S3_BUCKET_NAME'; // Change this when AWS is ready
+            // Lock the button so they can't click it twice
+            awsUploadBtn.disabled = true;
+            awsUploadBtn.style.opacity = '0.5';
 
             // ==========================================
-            // PRESENTATION MODE (Simulates upload if AWS isn't linked yet)
+            // THE FAKE UPLOAD ENGINE
             // ==========================================
-            if (bucketName === 'YOUR_S3_BUCKET_NAME') {
-                let progress = 0;
-                const fakeUpload = setInterval(() => {
-                    progress += Math.floor(Math.random() * 15) + 5; // Random jump between 5-20%
-                    if (progress >= 100) {
-                        progress = 100;
-                        clearInterval(fakeUpload);
-                        
-                        // Show Success
-                        progressBar.style.width = '100%';
-                        progressPercent.innerText = '100% TRANSMITTED';
-                        uploadText.style.color = 'var(--accent-teal)';
-                        uploadText.innerText = `✅ ${file.name} Loaded!`;
-                        uploadStatusMessage.style.display = 'block';
-                        uploadStatusMessage.style.color = 'var(--accent-teal)';
-                        uploadStatusMessage.innerText = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
-                    }
-                    progressBar.style.width = `${progress}%`;
-                    progressPercent.innerText = `${progress}% TRANSMITTED`;
-                }, 300); // Speed of the fake upload animation
-                return;
-            }
-
-            // ==========================================
-            // REAL AWS UPLOAD MODE
-            // ==========================================
-            AWS.config.region = 'us-east-1'; 
-            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                IdentityPoolId: 'YOUR_COGNITO_IDENTITY_POOL_ID', 
-            });
-
-            const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: bucketName }});
-            const upload = new AWS.S3.ManagedUpload({
-                params: {
-                    Bucket: bucketName,
-                    Key: `uploads/${Date.now()}_${file.name}`,
-                    Body: file
-                }
-            });
-
-            upload.on('httpUploadProgress', function(evt) {
-                const pct = Math.round((evt.loaded * 100) / evt.total);
-                progressBar.style.width = `${pct}%`;
-                progressPercent.innerText = `${pct}% TRANSMITTED`;
-            });
-
-            upload.send(function(err, data) {
-                if (err) {
-                    uploadStatusMessage.style.display = 'block';
-                    uploadStatusMessage.style.color = 'var(--accent-pink)';
-                    uploadStatusMessage.innerText = `❌ UPLOAD FAILED: Please check AWS Credentials.`;
-                    uploadText.style.color = 'var(--accent-pink)';
-                    uploadText.innerText = `❌ ERROR loading ${file.name}`;
-                } else {
+            let progress = 0;
+            const fakeUpload = setInterval(() => {
+                // Add a random amount of progress between 5% and 20%
+                progress += Math.floor(Math.random() * 15) + 5; 
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(fakeUpload); // Stop the timer
+                    
+                    // Trigger the Success UI
                     progressBar.style.width = '100%';
                     progressPercent.innerText = '100% TRANSMITTED';
+                    
                     uploadText.style.color = 'var(--accent-teal)';
                     uploadText.innerText = `✅ ${file.name} Loaded!`;
+                    
                     uploadStatusMessage.style.display = 'block';
                     uploadStatusMessage.style.color = 'var(--accent-teal)';
-                    uploadStatusMessage.innerText = `✅ SUCCESS: File parsed into Input Core securely.`;
+                    uploadStatusMessage.innerText = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
+
+                    // Unlock the button
+                    awsUploadBtn.disabled = false;
+                    awsUploadBtn.style.opacity = '1';
+                } else {
+                    // Update the visual cyan bar and percentage text
+                    progressBar.style.width = `${progress}%`;
+                    progressPercent.innerText = `${progress}% TRANSMITTED`;
                 }
-            });
+            }, 300); // The timer ticks every 300 milliseconds
         });
     }
 });
