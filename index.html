@@ -39,25 +39,26 @@
                     <form onsubmit="event.preventDefault();">
                         
                       <div class="form-group">
-    <label style="text-transform: uppercase;">Upload Revision Material</label>
-    
-    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" style="margin-top: 5px; cursor: pointer;">
-        <span class="retro-folder">📁</span>
-        <span id="uploadText" style="font-weight: bold;">Click to Drop PDF, DOC, DOCX or TXT</span>
-        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
-    </div>
+                            <label style="text-transform: uppercase;">Upload Revision Material</label>
+                            
+                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" style="margin-top: 5px; cursor: pointer;">
+                                <span class="retro-folder">📁</span>
+                                <span id="uploadText" style="font-weight: bold;">Click to Drop PDF, DOC, DOCX or TXT</span>
+                                <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+                            </div>
 
-    <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
-        <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
-            <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
-        </div>
-        <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace; font-weight: bold; color: white;">0% TRANSMITTED</div>
-    </div>
+                            <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
+                                <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
+                                    <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
+                                </div>
+                                <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace; font-weight: bold; color: white;">0% TRANSMITTED</div>
+                            </div>
 
-    <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none; font-size: 13px; font-weight: bold;"></div>
+                            <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none; font-size: 13px; font-weight: bold;"></div>
 
-    <button type="button" id="awsUploadBtn" class="btn-action" style="margin-top: 15px; background-color: transparent; border: 2px dashed var(--accent-teal); color: var(--accent-teal); width: 100%; font-size: 12px; cursor: pointer; transition: all 0.2s;">[ INITIATE AWS SECURE UPLOAD ]</button>
-</div>
+                            <button type="button" id="awsUploadBtn" class="btn-action" style="margin-top: 15px; background-color: transparent; border: 2px dashed var(--accent-teal); color: var(--accent-teal); width: 100%; font-size: 12px; cursor: pointer; transition: all 0.2s;">[ INITIATE AWS SECURE UPLOAD ]</button>
+                        </div>
+
                         <div class="form-group" style="margin-top: 30px;">
                             <label style="text-transform: uppercase;">Or Paste Material Content Data</label>
                             <textarea class="textarea-field" placeholder="Paste chapters, concept definitions, or raw study metrics here to build your crunch revision sets..." style="width: 100%; box-sizing: border-box; min-height: 120px;"></textarea>
@@ -104,5 +105,95 @@
     </main>
 
     <script src="script.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const fileInput = document.getElementById('fileInput');
+            const uploadText = document.getElementById('uploadText');
+            const uploadProgressWrapper = document.getElementById('uploadProgressWrapper');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const uploadStatusMessage = document.getElementById('uploadStatusMessage');
+            const awsUploadBtn = document.getElementById('awsUploadBtn');
+
+            // 1. Listen for the user picking a file
+            if (fileInput) {
+                fileInput.addEventListener('change', () => {
+                    if (fileInput.files.length > 0) {
+                        uploadText.style.color = 'var(--accent-teal)';
+                        uploadText.innerText = `SELECTED: ${fileInput.files[0].name}`;
+                        uploadStatusMessage.style.display = 'none'; 
+                        if(uploadProgressWrapper) uploadProgressWrapper.style.display = 'none';
+                    }
+                });
+            }
+
+            // 2. Listen for the upload button click
+            if (awsUploadBtn) {
+                awsUploadBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    
+                    // Check if file is missing
+                    if (!fileInput || !fileInput.files.length) {
+                        uploadStatusMessage.style.display = 'block';
+                        uploadStatusMessage.style.color = 'var(--accent-pink)';
+                        uploadStatusMessage.innerText = "❌ ERROR: Please click the folder above to select a file first.";
+                        return;
+                    }
+
+                    const file = fileInput.files[0];
+                    
+                    // Check if format is wrong
+                    const allowedExtensions = ['pdf', 'doc', 'docx', 'txt'];
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        uploadStatusMessage.style.display = 'block';
+                        uploadStatusMessage.style.color = 'var(--accent-pink)';
+                        uploadStatusMessage.innerText = "❌ ERROR: Invalid format. Only PDF, DOC, DOCX, and TXT are permitted.";
+                        return;
+                    }
+
+                    // Reset UI and start animation
+                    uploadStatusMessage.style.display = 'none';
+                    uploadProgressWrapper.style.display = 'block';
+                    progressBar.style.width = '0%';
+                    progressPercent.innerText = '0% TRANSMITTED';
+                    uploadText.style.color = 'var(--text-color)';
+                    uploadText.innerText = `READING: ${file.name}...`;
+
+                    awsUploadBtn.disabled = true;
+                    awsUploadBtn.style.opacity = '0.5';
+
+                    // Fake Upload Engine (Animations)
+                    let progress = 0;
+                    const fakeUpload = setInterval(() => {
+                        progress += Math.floor(Math.random() * 15) + 5; 
+                        
+                        if (progress >= 100) {
+                            progress = 100;
+                            clearInterval(fakeUpload); 
+                            
+                            // Success UI
+                            progressBar.style.width = '100%';
+                            progressPercent.innerText = '100% TRANSMITTED';
+                            uploadText.style.color = 'var(--accent-teal)';
+                            uploadText.innerText = `✅ ${file.name} Loaded!`;
+                            uploadStatusMessage.style.display = 'block';
+                            uploadStatusMessage.style.color = 'var(--accent-teal)';
+                            uploadStatusMessage.innerText = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
+
+                            awsUploadBtn.disabled = false;
+                            awsUploadBtn.style.opacity = '1';
+                        } else {
+                            // Update progress bar
+                            progressBar.style.width = `${progress}%`;
+                            progressPercent.innerText = `${progress}% TRANSMITTED`;
+                        }
+                    }, 300);
+                });
+            }
+        });
+    </script>
 </body>
-</h
+</html>
