@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 6. AWS S3 UPLOAD ENGINE (CUSTOM UI INTEGRATION)
+// 6. AWS S3 UPLOAD ENGINE (LAYOUT SAFE)
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById('fileInput');
@@ -298,20 +298,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadStatusMessage = document.getElementById('uploadStatusMessage');
     const awsUploadBtn = document.getElementById('awsUploadBtn');
 
-    // Instantly show the file name when selected
+    // STEP 1: Handle File Selection (Changes the text in the folder box)
     if (fileInput) {
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
-                uploadText.style.color = 'var(--text-color)';
+                uploadText.style.color = 'var(--accent-teal)';
                 uploadText.innerText = `SELECTED: ${fileInput.files[0].name}`;
-                uploadStatusMessage.style.display = 'none';
-                uploadProgressWrapper.style.display = 'none';
+                uploadStatusMessage.style.display = 'none'; // Clear old errors
+                if(uploadProgressWrapper) uploadProgressWrapper.style.display = 'none';
             }
         });
     }
 
+    // STEP 2: Handle The Upload Button Click
     if (awsUploadBtn) {
-        // AWS Config
+        // AWS Config Setup
         AWS.config.region = 'us-east-1'; 
         AWS.config.credentials = new AWS.CognitoIdentityCredentials({
             IdentityPoolId: 'YOUR_COGNITO_IDENTITY_POOL_ID', 
@@ -322,17 +323,17 @@ document.addEventListener("DOMContentLoaded", () => {
         awsUploadBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
             
-            // Validation 1: File Selected?
+            // Check 1: Did they select a file?
             if (!fileInput || !fileInput.files.length) {
                 uploadStatusMessage.style.display = 'block';
                 uploadStatusMessage.style.color = 'var(--accent-pink)';
-                uploadStatusMessage.innerText = "❌ ERROR: No document detected. Please select a file.";
+                uploadStatusMessage.innerText = "❌ ERROR: Please select a file from the folder above first.";
                 return;
             }
 
             const file = fileInput.files[0];
             
-            // Validation 2: Correct Format?
+            // Check 2: Is it an allowed format?
             const allowedExtensions = ['pdf', 'doc', 'docx', 'txt'];
             const fileExtension = file.name.split('.').pop().toLowerCase();
             
@@ -343,9 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // ----------------------------------------------------
-            // TRIGGER UPLOADING UI (Matches image_6f823b.png)
-            // ----------------------------------------------------
+            // Start Upload UI Animation
             uploadStatusMessage.style.display = 'none';
             uploadProgressWrapper.style.display = 'block';
             progressBar.style.width = '0%';
@@ -353,6 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadText.style.color = 'var(--text-color)';
             uploadText.innerText = `READING: ${file.name}...`;
 
+            // Setup AWS Upload parameters
             const upload = new AWS.S3.ManagedUpload({
                 params: {
                     Bucket: 'YOUR_S3_BUCKET_NAME',
@@ -361,33 +361,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // Update custom progress bar
+            // Track Live Progress on your Cyan Bar
             upload.on('httpUploadProgress', function(evt) {
                 const pct = Math.round((evt.loaded * 100) / evt.total);
                 progressBar.style.width = `${pct}%`;
                 progressPercent.innerText = `${pct}% TRANSMITTED`;
             });
 
+            // Handle Final Result
             upload.send(function(err, data) {
                 if (err) {
+                    // Show Error
                     uploadStatusMessage.style.display = 'block';
                     uploadStatusMessage.style.color = 'var(--accent-pink)';
-                    uploadStatusMessage.innerText = `❌ UPLOAD FAILED: ${err.message}`;
+                    uploadStatusMessage.innerText = `❌ UPLOAD FAILED: Please check AWS Credentials.`;
                     uploadText.style.color = 'var(--accent-pink)';
                     uploadText.innerText = `❌ ERROR loading ${file.name}`;
                 } else {
-                    // ----------------------------------------------------
-                    // TRIGGER SUCCESS UI (Matches image_6f821f.png)
-                    // ----------------------------------------------------
+                    // Show Success
                     progressBar.style.width = '100%';
                     progressPercent.innerText = '100% TRANSMITTED';
-                    
                     uploadText.style.color = 'var(--accent-teal)';
                     uploadText.innerText = `✅ ${file.name} Loaded!`;
-
                     uploadStatusMessage.style.display = 'block';
                     uploadStatusMessage.style.color = 'var(--accent-teal)';
-                    uploadStatusMessage.innerText = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly and secured to AWS.`;
+                    uploadStatusMessage.innerText = `✅ SUCCESS: File parsed into Input Core securely.`;
                 }
             });
         });
