@@ -107,6 +107,7 @@
     <script src="script.js"></script>
 
     <script>
+        <script>
         document.addEventListener("DOMContentLoaded", () => {
             const fileInput = document.getElementById('fileInput');
             const uploadText = document.getElementById('uploadText');
@@ -133,7 +134,7 @@
                 awsUploadBtn.addEventListener('click', (e) => {
                     e.preventDefault(); 
                     
-                    // Check if file is missing
+                    // Validation checks
                     if (!fileInput || !fileInput.files.length) {
                         uploadStatusMessage.style.display = 'block';
                         uploadStatusMessage.style.color = 'var(--accent-pink)';
@@ -142,8 +143,6 @@
                     }
 
                     const file = fileInput.files[0];
-                    
-                    // Check if format is wrong
                     const allowedExtensions = ['pdf', 'doc', 'docx', 'txt'];
                     const fileExtension = file.name.split('.').pop().toLowerCase();
                     
@@ -165,35 +164,67 @@
                     awsUploadBtn.disabled = true;
                     awsUploadBtn.style.opacity = '0.5';
 
-                    // Fake Upload Engine (Animations)
-                    let progress = 0;
-                    const fakeUpload = setInterval(() => {
-                        progress += Math.floor(Math.random() * 15) + 5; 
-                        
-                        if (progress >= 100) {
-                            progress = 100;
-                            clearInterval(fakeUpload); 
-                            
-                            // Success UI
-                            progressBar.style.width = '100%';
-                            progressPercent.innerText = '100% TRANSMITTED';
-                            uploadText.style.color = 'var(--accent-teal)';
-                            uploadText.innerText = `✅ ${file.name} Loaded!`;
-                            uploadStatusMessage.style.display = 'block';
-                            uploadStatusMessage.style.color = 'var(--accent-teal)';
-                            uploadStatusMessage.innerText = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
+                    // ==========================================
+                    // REAL AWS CONNECTION LOGIC
+                    // ==========================================
+                    
+                    // 1. Configure AWS Credentials
+                    AWS.config.region = 'us-east-1'; 
+                    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                        // 👇 IMPORTANT: PASTE YOUR ACTUAL IDENTITY POOL ID HERE 👇
+                        IdentityPoolId: us-east-1:9668dafa-b10a-470c-8d65-c23a17547bfe, 
+                    });
 
+                    // 👇 YOUR BUCKET NAME 👇
+                    const bucketName = 'studyvorx-exam-uploads'; 
+
+                    // 2. Prepare the Upload
+                    const upload = new AWS.S3.ManagedUpload({
+                        params: {
+                            Bucket: bucketName,
+                            Key: `uploads/${Date.now()}_${file.name}`,
+                            Body: file
+                        }
+                    });
+
+                    // 3. Track Live Progress from AWS to your Cyan Bar
+                    upload.on('httpUploadProgress', function(evt) {
+                        const pct = Math.round((evt.loaded * 100) / evt.total);
+                        progressBar.style.width = `${pct}%`;
+                        progressPercent.innerText = `${pct}% TRANSMITTED`;
+                    });
+
+                    // 4. Send the File and Handle the Response
+                    upload.send(function(err, data) {
+                        if (err) {
+                            // Display error if AWS rejects it
+                            uploadStatusMessage.style.display = 'block';
+                            uploadStatusMessage.style.color = 'var(--accent-pink)';
+                            uploadStatusMessage.innerText = `❌ UPLOAD FAILED: ${err.message}`;
+                            
                             awsUploadBtn.disabled = false;
                             awsUploadBtn.style.opacity = '1';
                         } else {
-                            // Update progress bar
-                            progressBar.style.width = `${progress}%`;
-                            progressPercent.innerText = `${progress}% TRANSMITTED`;
+                            // Display success UI when AWS confirms receipt
+                            progressBar.style.width = '100%';
+                            progressPercent.innerText = '100% TRANSMITTED';
+                            
+                            uploadText.style.color = 'var(--accent-teal)';
+                            uploadText.innerText = `✅ ${file.name} Secured!`;
+                            
+                            uploadStatusMessage.style.display = 'block';
+                            uploadStatusMessage.style.color = 'var(--accent-teal)';
+                            uploadStatusMessage.innerText = `✅ SUCCESS: File securely transmitted to AWS Data Core.`;
+
+                            awsUploadBtn.disabled = false;
+                            awsUploadBtn.style.opacity = '1';
                         }
-                    }, 300);
+                    });
                 });
             }
         });
     </script>
 </body>
 </html>
+  
+      
