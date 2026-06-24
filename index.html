@@ -38,27 +38,26 @@
 
                     <form onsubmit="event.preventDefault();">
                         
-                        <div class="form-group">
-                            <label style="text-transform: uppercase;">Upload Revision Material</label>
-                            
-                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" style="margin-top: 5px;">
-                                <span class="retro-folder">📁</span>
-                                <span id="uploadText" style="font-weight: bold;">Click to Drop PDF, DOC, DOCX or TXT</span>
-                                <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
-                            </div>
+                      <div class="form-group">
+    <label style="text-transform: uppercase;">Upload Revision Material</label>
+    
+    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" style="margin-top: 5px; cursor: pointer;">
+        <span class="retro-folder">📁</span>
+        <span id="uploadText" style="font-weight: bold;">Click to Drop PDF, DOC, DOCX or TXT</span>
+        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+    </div>
 
-                            <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
-                                <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
-                                    <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
-                                </div>
-                                <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace; font-weight: bold; color: white;">0% TRANSMITTED</div>
-                            </div>
+    <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
+        <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
+            <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
+        </div>
+        <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace; font-weight: bold; color: white;">0% TRANSMITTED</div>
+    </div>
 
-                            <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none; font-size: 13px; font-weight: bold;"></div>
+    <div id="uploadStatusMessage" class="paragraph-text" style="margin-top: 10px; display: none; font-size: 13px; font-weight: bold;"></div>
 
-                            <button type="button" id="awsUploadBtn" class="btn-action" style="margin-top: 15px; background-color: transparent; border: 2px dashed var(--accent-teal); color: var(--accent-teal); width: 100%; font-size: 12px;">[ INITIATE AWS SECURE UPLOAD ]</button>
-                        </div>
-
+    <button type="button" id="awsUploadBtn" class="btn-action" style="margin-top: 15px; background-color: transparent; border: 2px dashed var(--accent-teal); color: var(--accent-teal); width: 100%; font-size: 12px; cursor: pointer; transition: all 0.2s;">[ INITIATE AWS SECURE UPLOAD ]</button>
+</div>
                         <div class="form-group" style="margin-top: 30px;">
                             <label style="text-transform: uppercase;">Or Paste Material Content Data</label>
                             <textarea class="textarea-field" placeholder="Paste chapters, concept definitions, or raw study metrics here to build your crunch revision sets..." style="width: 100%; box-sizing: border-box; min-height: 120px;"></textarea>
