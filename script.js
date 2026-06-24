@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 6. AWS S3 UPLOAD ENGINE (LAYOUT SAFE)
+// 6. AWS S3 UPLOAD ENGINE (WITH PRESENTATION MODE)
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById('fileInput');
@@ -298,32 +298,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadStatusMessage = document.getElementById('uploadStatusMessage');
     const awsUploadBtn = document.getElementById('awsUploadBtn');
 
-    // STEP 1: Handle File Selection (Changes the text in the folder box)
+    // 1. Handle File Selection (Changes text in the folder box)
     if (fileInput) {
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
                 uploadText.style.color = 'var(--accent-teal)';
                 uploadText.innerText = `SELECTED: ${fileInput.files[0].name}`;
-                uploadStatusMessage.style.display = 'none'; // Clear old errors
+                uploadStatusMessage.style.display = 'none'; 
                 if(uploadProgressWrapper) uploadProgressWrapper.style.display = 'none';
             }
         });
     }
 
-    // STEP 2: Handle The Upload Button Click
+    // 2. Handle The Upload Button Click
     if (awsUploadBtn) {
-        // AWS Config Setup
-        AWS.config.region = 'us-east-1'; 
-        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-            IdentityPoolId: 'YOUR_COGNITO_IDENTITY_POOL_ID', 
-        });
-
-        const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: 'YOUR_S3_BUCKET_NAME' }});
-
         awsUploadBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
             
-            // Check 1: Did they select a file?
+            // Validation 1: Did they select a file?
             if (!fileInput || !fileInput.files.length) {
                 uploadStatusMessage.style.display = 'block';
                 uploadStatusMessage.style.color = 'var(--accent-pink)';
@@ -333,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const file = fileInput.files[0];
             
-            // Check 2: Is it an allowed format?
+            // Validation 2: Is it an allowed format?
             const allowedExtensions = ['pdf', 'doc', 'docx', 'txt'];
             const fileExtension = file.name.split('.').pop().toLowerCase();
             
@@ -352,33 +344,65 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadText.style.color = 'var(--text-color)';
             uploadText.innerText = `READING: ${file.name}...`;
 
-            // Setup AWS Upload parameters
+            const bucketName = 'YOUR_S3_BUCKET_NAME'; // Change this when AWS is ready
+
+            // ==========================================
+            // PRESENTATION MODE (Simulates upload if AWS isn't linked yet)
+            // ==========================================
+            if (bucketName === 'YOUR_S3_BUCKET_NAME') {
+                let progress = 0;
+                const fakeUpload = setInterval(() => {
+                    progress += Math.floor(Math.random() * 15) + 5; // Random jump between 5-20%
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(fakeUpload);
+                        
+                        // Show Success
+                        progressBar.style.width = '100%';
+                        progressPercent.innerText = '100% TRANSMITTED';
+                        uploadText.style.color = 'var(--accent-teal)';
+                        uploadText.innerText = `✅ ${file.name} Loaded!`;
+                        uploadStatusMessage.style.display = 'block';
+                        uploadStatusMessage.style.color = 'var(--accent-teal)';
+                        uploadStatusMessage.innerText = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
+                    }
+                    progressBar.style.width = `${progress}%`;
+                    progressPercent.innerText = `${progress}% TRANSMITTED`;
+                }, 300); // Speed of the fake upload animation
+                return;
+            }
+
+            // ==========================================
+            // REAL AWS UPLOAD MODE
+            // ==========================================
+            AWS.config.region = 'us-east-1'; 
+            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: 'YOUR_COGNITO_IDENTITY_POOL_ID', 
+            });
+
+            const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: bucketName }});
             const upload = new AWS.S3.ManagedUpload({
                 params: {
-                    Bucket: 'YOUR_S3_BUCKET_NAME',
+                    Bucket: bucketName,
                     Key: `uploads/${Date.now()}_${file.name}`,
                     Body: file
                 }
             });
 
-            // Track Live Progress on your Cyan Bar
             upload.on('httpUploadProgress', function(evt) {
                 const pct = Math.round((evt.loaded * 100) / evt.total);
                 progressBar.style.width = `${pct}%`;
                 progressPercent.innerText = `${pct}% TRANSMITTED`;
             });
 
-            // Handle Final Result
             upload.send(function(err, data) {
                 if (err) {
-                    // Show Error
                     uploadStatusMessage.style.display = 'block';
                     uploadStatusMessage.style.color = 'var(--accent-pink)';
                     uploadStatusMessage.innerText = `❌ UPLOAD FAILED: Please check AWS Credentials.`;
                     uploadText.style.color = 'var(--accent-pink)';
                     uploadText.innerText = `❌ ERROR loading ${file.name}`;
                 } else {
-                    // Show Success
                     progressBar.style.width = '100%';
                     progressPercent.innerText = '100% TRANSMITTED';
                     uploadText.style.color = 'var(--accent-teal)';
