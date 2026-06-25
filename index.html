@@ -106,9 +106,9 @@
 
     <script src="script.js"></script>
 
-    <script>
-        <script>
+   <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const dropZone = document.getElementById('dropZone');
             const fileInput = document.getElementById('fileInput');
             const uploadText = document.getElementById('uploadText');
             const uploadProgressWrapper = document.getElementById('uploadProgressWrapper');
@@ -117,49 +117,86 @@
             const uploadStatusMessage = document.getElementById('uploadStatusMessage');
             const awsUploadBtn = document.getElementById('awsUploadBtn');
 
-            // 1. Listen for the user picking a file
+            let currentFile = null;
+
+            // --- 1. ROBUST FILE HANDLING (CLICK & DROP) ---
+            
+            // Function to update the UI when a file is selected
+            function handleFileSelection(file) {
+                if (!file) return;
+                currentFile = file;
+                uploadText.style.color = 'var(--accent-teal)';
+                uploadText.innerText = `SELECTED: ${file.name}`;
+                uploadStatusMessage.style.display = 'none'; 
+                if(uploadProgressWrapper) uploadProgressWrapper.style.display = 'none';
+            }
+
+            // Handle Click Selection
             if (fileInput) {
-                fileInput.addEventListener('change', () => {
-                    if (fileInput.files.length > 0) {
-                        uploadText.style.color = 'var(--accent-teal)';
-                        uploadText.innerText = `SELECTED: ${fileInput.files[0].name}`;
-                        uploadStatusMessage.style.display = 'none'; 
-                        if(uploadProgressWrapper) uploadProgressWrapper.style.display = 'none';
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) handleFileSelection(e.target.files[0]);
+                });
+            }
+
+            // Handle True Drag & Drop
+            if (dropZone) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => dropZone.style.border = '2px dashed var(--accent-teal)');
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => dropZone.style.border = 'none');
+                });
+
+                dropZone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    if (dt.files && dt.files.length > 0) {
+                        fileInput.files = dt.files; // Sync the hidden input
+                        handleFileSelection(dt.files[0]);
                     }
                 });
             }
 
-            // 2. Listen for the upload button click
+            // --- 2. BULLETPROOF UPLOAD ENGINE ---
             if (awsUploadBtn) {
                 awsUploadBtn.addEventListener('click', (e) => {
                     e.preventDefault(); 
                     
-                    // Validation checks
-                    if (!fileInput || !fileInput.files.length) {
-                        uploadStatusMessage.style.display = 'block';
-                        uploadStatusMessage.style.color = 'var(--accent-pink)';
-                        uploadStatusMessage.innerText = "❌ ERROR: Please click the folder above to select a file first.";
+                    // Failsafe 1: Check if AWS SDK loaded properly
+                    if (typeof AWS === 'undefined') {
+                        showError("AWS SDK failed to load. Please turn off your Adblocker or check your internet connection.");
+                        return;
+                    }
+                    
+                    // Failsafe 2: Check for missing file
+                    if (!currentFile) {
+                        showError("Please click the folder or drop a file to select it first.");
                         return;
                     }
 
-                    const file = fileInput.files[0];
+                    // Failsafe 3: Format Validation
                     const allowedExtensions = ['pdf', 'doc', 'docx', 'txt'];
-                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    const fileExtension = currentFile.name.split('.').pop().toLowerCase();
                     
                     if (!allowedExtensions.includes(fileExtension)) {
-                        uploadStatusMessage.style.display = 'block';
-                        uploadStatusMessage.style.color = 'var(--accent-pink)';
-                        uploadStatusMessage.innerText = "❌ ERROR: Invalid format. Only PDF, DOC, DOCX, and TXT are permitted.";
+                        showError("Invalid format. Only PDF, DOC, DOCX, and TXT are permitted.");
                         return;
                     }
 
-                    // Reset UI and start animation
+                    // Start UI Animation
                     uploadStatusMessage.style.display = 'none';
                     uploadProgressWrapper.style.display = 'block';
                     progressBar.style.width = '0%';
                     progressPercent.innerText = '0% TRANSMITTED';
                     uploadText.style.color = 'var(--text-color)';
-                    uploadText.innerText = `READING: ${file.name}...`;
+                    uploadText.innerText = `READING: ${currentFile.name}...`;
 
                     awsUploadBtn.disabled = true;
                     awsUploadBtn.style.opacity = '0.5';
@@ -167,64 +204,66 @@
                     // ==========================================
                     // REAL AWS CONNECTION LOGIC
                     // ==========================================
-                    
-                    // 1. Configure AWS Credentials
-                    AWS.config.region = 'us-east-1'; 
-                    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                        // 👇 IMPORTANT: PASTE YOUR ACTUAL IDENTITY POOL ID HERE 👇
-                        IdentityPoolId: us-east-1:9668dafa-b10a-470c-8d65-c23a17547bfe, 
-                    });
+                    try {
+                        AWS.config.region = 'us-east-1'; 
+                        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                            // 👇 IMPORTANT: PASTE YOUR ACTUAL IDENTITY POOL ID HERE 👇
+                            IdentityPoolId: 'PASTE_YOUR_COGNITO_POOL_ID_HERE', 
+                        });
 
-                    // 👇 YOUR BUCKET NAME 👇
-                    const bucketName = 'studyvorx-exam-uploads'; 
+                        // 👇 YOUR BUCKET NAME 👇
+                        const bucketName = 'studyvorx-exam-uploads'; 
 
-                    // 2. Prepare the Upload
-                    const upload = new AWS.S3.ManagedUpload({
-                        params: {
-                            Bucket: bucketName,
-                            Key: `uploads/${Date.now()}_${file.name}`,
-                            Body: file
-                        }
-                    });
+                        const upload = new AWS.S3.ManagedUpload({
+                            params: {
+                                Bucket: bucketName,
+                                Key: `uploads/${Date.now()}_${currentFile.name}`,
+                                Body: currentFile
+                            }
+                        });
 
-                    // 3. Track Live Progress from AWS to your Cyan Bar
-                    upload.on('httpUploadProgress', function(evt) {
-                        const pct = Math.round((evt.loaded * 100) / evt.total);
-                        progressBar.style.width = `${pct}%`;
-                        progressPercent.innerText = `${pct}% TRANSMITTED`;
-                    });
+                        upload.on('httpUploadProgress', function(evt) {
+                            const pct = Math.round((evt.loaded * 100) / evt.total);
+                            progressBar.style.width = `${pct}%`;
+                            progressPercent.innerText = `${pct}% TRANSMITTED`;
+                        });
 
-                    // 4. Send the File and Handle the Response
-                    upload.send(function(err, data) {
-                        if (err) {
-                            // Display error if AWS rejects it
-                            uploadStatusMessage.style.display = 'block';
-                            uploadStatusMessage.style.color = 'var(--accent-pink)';
-                            uploadStatusMessage.innerText = `❌ UPLOAD FAILED: ${err.message}`;
-                            
-                            awsUploadBtn.disabled = false;
-                            awsUploadBtn.style.opacity = '1';
-                        } else {
-                            // Display success UI when AWS confirms receipt
-                            progressBar.style.width = '100%';
-                            progressPercent.innerText = '100% TRANSMITTED';
-                            
-                            uploadText.style.color = 'var(--accent-teal)';
-                            uploadText.innerText = `✅ ${file.name} Secured!`;
-                            
-                            uploadStatusMessage.style.display = 'block';
-                            uploadStatusMessage.style.color = 'var(--accent-teal)';
-                            uploadStatusMessage.innerText = `✅ SUCCESS: File securely transmitted to AWS Data Core.`;
+                        upload.send(function(err, data) {
+                            if (err) {
+                                // Forces AWS to print the EXACT reason it failed to the screen
+                                showError(`AWS REJECTED UPLOAD: ${err.message}`);
+                            } else {
+                                // Success UI
+                                progressBar.style.width = '100%';
+                                progressPercent.innerText = '100% TRANSMITTED';
+                                uploadText.style.color = 'var(--accent-teal)';
+                                uploadText.innerText = `✅ ${currentFile.name} Secured!`;
+                                
+                                uploadStatusMessage.style.display = 'block';
+                                uploadStatusMessage.style.color = 'var(--accent-teal)';
+                                uploadStatusMessage.innerText = `✅ SUCCESS: File securely transmitted to AWS Data Core.`;
 
-                            awsUploadBtn.disabled = false;
-                            awsUploadBtn.style.opacity = '1';
-                        }
-                    });
+                                awsUploadBtn.disabled = false;
+                                awsUploadBtn.style.opacity = '1';
+                            }
+                        });
+                    } catch (fatalError) {
+                        showError(`FATAL SYSTEM ERROR: ${fatalError.message}`);
+                    }
                 });
+            }
+
+            // Helper function to force errors onto the screen
+            function showError(msg) {
+                uploadStatusMessage.style.display = 'block';
+                uploadStatusMessage.style.color = 'var(--accent-pink)';
+                uploadStatusMessage.innerHTML = `❌ <strong>ERROR:</strong> ${msg}`;
+                if(awsUploadBtn) {
+                    awsUploadBtn.disabled = false;
+                    awsUploadBtn.style.opacity = '1';
+                }
             }
         });
     </script>
 </body>
 </html>
-  
-      
