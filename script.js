@@ -286,119 +286,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ==========================================
-// 6. FRONTEND UPLOAD SIMULATOR (NO BACKEND)
-// ==========================================
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. Hook into your HTML elements
-    const fileInput = document.getElementById('fileInput');
-    const uploadText = document.getElementById('uploadText');
-    const uploadProgressWrapper = document.getElementById('uploadProgressWrapper');
-    const progressBar = document.getElementById('progressBar');
-    const progressPercent = document.getElementById('progressPercent');
-    const uploadStatusMessage = document.getElementById('uploadStatusMessage');
-    const awsUploadBtn = document.getElementById('awsUploadBtn');
-
-    // 2. Handle File Selection
-    if (fileInput) {
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                // Change text in the folder box to show the file name
-                uploadText.style.color = 'var(--accent-teal)';
-                uploadText.innerText = `SELECTED: ${fileInput.files[0].name}`;
-                
-                // Reset any previous errors or progress bars
-                uploadStatusMessage.style.display = 'none'; 
-                if(uploadProgressWrapper) uploadProgressWrapper.style.display = 'none';
-            }
-        });
-    }
-
-    // 3. Handle The Upload Button Click
-    if (awsUploadBtn) {
-        awsUploadBtn.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            
-            // Validation 1: Did they select a file?
-            if (!fileInput || !fileInput.files.length) {
-                uploadStatusMessage.style.display = 'block';
-                uploadStatusMessage.style.color = 'var(--accent-pink)';
-                uploadStatusMessage.innerText = "❌ ERROR: Please select a file from the folder above first.";
-                return;
-            }
-
-            const file = fileInput.files[0];
-            
-            // Validation 2: Is it an allowed format?
-            const allowedExtensions = ['pdf', 'doc', 'docx', 'txt'];
-            const fileExtension = file.name.split('.').pop().toLowerCase();
-            
-            if (!allowedExtensions.includes(fileExtension)) {
-                uploadStatusMessage.style.display = 'block';
-                uploadStatusMessage.style.color = 'var(--accent-pink)';
-                uploadStatusMessage.innerText = "❌ ERROR: Invalid format. Only PDF, DOC, DOCX, and TXT are permitted.";
-                return;
-            }
-
-            // Start Upload UI Animation
-            uploadStatusMessage.style.display = 'none';
-            uploadProgressWrapper.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressPercent.innerText = '0% TRANSMITTED';
-            uploadText.style.color = 'var(--text-color)';
-            uploadText.innerText = `READING: ${file.name}...`;
-
-            // Lock the button so they can't click it twice
-            awsUploadBtn.disabled = true;
-            awsUploadBtn.style.opacity = '0.5';
-
-            // ==========================================
-            // THE FAKE UPLOAD ENGINE
-            // ==========================================
-            let progress = 0;
-            const fakeUpload = setInterval(() => {
-                // Add a random amount of progress between 5% and 20%
-                progress += Math.floor(Math.random() * 15) + 5; 
-                
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(fakeUpload); // Stop the timer
-                    
-                    // Trigger the Success UI
-                    progressBar.style.width = '100%';
-                    progressPercent.innerText = '100% TRANSMITTED';
-                    
-                    uploadText.style.color = 'var(--accent-teal)';
-                    uploadText.innerText = `✅ ${file.name} Loaded!`;
-                    
-                    uploadStatusMessage.style.display = 'block';
-                    uploadStatusMessage.style.color = 'var(--accent-teal)';
-                    uploadStatusMessage.innerText = `✅ SUCCESS: File [${file.name}] parsed into Input Core cleanly.`;
-
-                    // Unlock the button
-                    awsUploadBtn.disabled = false;
-                    awsUploadBtn.style.opacity = '1';
-                } else {
-                    // Update the visual cyan bar and percentage text
-                    progressBar.style.width = `${progress}%`;
-                    progressPercent.innerText = `${progress}% TRANSMITTED`;
-                }
-            }, 300); // The timer ticks every 300 milliseconds
-        });
-    }
-});
 
 // ==========================================
-            // 7.REAL AWS UPLOAD ENGINE
+            // 6.REAL AWS UPLOAD ENGINE
             // ==========================================
             
             // 1. Configure AWS Credentials
             AWS.config.region = 'us-east-1'; 
             AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                IdentityPoolId: 'PASTE_YOUR_COGNITO_POOL_ID_HERE', // e.g., 'us-east-1:a1b2c3d4...'
+                IdentityPoolId: 'us-east-1:9668dafa-b10a-470c-8d65-c23a17547bfe', // e.g., 'us-east-1:a1b2c3d4...'
             });
 
-            const bucketName = 'PASTE_YOUR_BUCKET_NAME_HERE'; // e.g., 'studyvorx-exam-uploads'
+            const bucketName = 'studyvorx-exam-uploads'; // e.g., 'studyvorx-exam-uploads'
 
             // 2. Prepare the Upload Payload
             const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: bucketName }});
