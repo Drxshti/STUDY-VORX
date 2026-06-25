@@ -387,3 +387,61 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+// ==========================================
+            // 7.REAL AWS UPLOAD ENGINE
+            // ==========================================
+            
+            // 1. Configure AWS Credentials
+            AWS.config.region = 'us-east-1'; 
+            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: 'PASTE_YOUR_COGNITO_POOL_ID_HERE', // e.g., 'us-east-1:a1b2c3d4...'
+            });
+
+            const bucketName = 'PASTE_YOUR_BUCKET_NAME_HERE'; // e.g., 'studyvorx-exam-uploads'
+
+            // 2. Prepare the Upload Payload
+            const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: bucketName }});
+            const upload = new AWS.S3.ManagedUpload({
+                params: {
+                    Bucket: bucketName,
+                    Key: `uploads/${Date.now()}_${file.name}`, // Adds a timestamp so files don't overwrite each other
+                    Body: file
+                }
+            });
+
+            // 3. Track Live Progress from AWS to the Cyan Bar
+            upload.on('httpUploadProgress', function(evt) {
+                const pct = Math.round((evt.loaded * 100) / evt.total);
+                progressBar.style.width = `${pct}%`;
+                progressPercent.innerText = `${pct}% TRANSMITTED`;
+            });
+
+            // 4. Send the File and Handle the Response
+            upload.send(function(err, data) {
+                if (err) {
+                    // Fail State
+                    uploadStatusMessage.style.display = 'block';
+                    uploadStatusMessage.style.color = 'var(--accent-pink)';
+                    uploadStatusMessage.style.borderColor = 'var(--accent-pink)';
+                    uploadStatusMessage.innerText = `❌ UPLOAD FAILED: ${err.message}`;
+                    
+                    awsUploadBtn.disabled = false;
+                    awsUploadBtn.style.opacity = '1';
+                } else {
+                    // Success State
+                    progressBar.style.width = '100%';
+                    progressPercent.innerText = '100% TRANSMITTED';
+                    
+                    uploadText.style.color = 'var(--accent-teal)';
+                    uploadText.innerText = `✅ ${file.name} Secured!`;
+                    
+                    uploadStatusMessage.style.display = 'block';
+                    uploadStatusMessage.style.color = 'var(--accent-teal)';
+                    uploadStatusMessage.style.borderColor = 'var(--accent-teal)';
+                    uploadStatusMessage.innerText = `✅ SUCCESS: File securely transmitted to AWS Data Core.`;
+
+                    awsUploadBtn.disabled = false;
+                    awsUploadBtn.style.opacity = '1';
+                }
+            });
