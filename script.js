@@ -291,11 +291,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // 6.REAL AWS UPLOAD ENGINE
             // ==========================================
             
-            // 1. Configure AWS Credentials
+             // 1. Configure AWS Credentials
             AWS.config.region = 'us-east-1'; 
             AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                IdentityPoolId: 'us-east-1:9668dafa-b10a-470c-8d65-c23a17547bfe', // e.g., 'us-east-1:a1b2c3d4...'
-            });
+               IdentityPoolId: 'us-east-1:9668dafa-b10a-470c-8d65-c23a17547bfe', 
+});
 
             const bucketName = 'studyvorx-exam-uploads'; // e.g., 'studyvorx-exam-uploads'
 
