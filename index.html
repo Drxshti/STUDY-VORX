@@ -150,17 +150,19 @@
 
             const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: BUCKET_NAME }});
 
-            // 2. FETCH DOCUMENTS LOGIC
+         // 2. FETCH DOCUMENTS LOGIC
             function loadMyDocuments() {
                 AWS.config.credentials.get(function(authErr) {
                     if (authErr) {
-                        documentList.innerHTML = `<div style="color: var(--accent-pink); padding: 20px; text-align: center;">❌ Auth Error: Check Cognito ID</div>`;
+                        // 👇 Color fixed here 👇
+                        documentList.innerHTML = `<div style="color: #ff5555; padding: 20px; text-align: center; font-family: monospace;">❌ Auth Error: Check Cognito ID</div>`;
                         return;
                     }
 
                     s3.listObjectsV2({ Prefix: 'uploads/' }, function(err, data) {
                         if (err) {
-                            documentList.innerHTML = `<div style="color: var(--accent-pink); padding: 20px; text-align: center;">❌ Please wait for permissions to sync.</div>`;
+                            // 👇 Color fixed here 👇
+                            documentList.innerHTML = `<div style="color: #ff5555; padding: 20px; text-align: center; font-family: monospace;">❌ Please wait for permissions to sync.</div>`;
                             return;
                         }
 
@@ -184,7 +186,7 @@
                         files.forEach(file => {
                             const fileName = file.Key.replace('uploads/', ''); 
                             const dateStr = new Date(file.LastModified).toLocaleString(); 
-                            const url = s3.getSignedUrl('getObject', { Bucket: BUCKET_NAME, Key: file.Key, Expires: 3600 });
+                            const url = s3.getSignedUrl('getObject', { Bucket: studyvorx-exam-uploads, Key: file.Key, Expires: 3600 });
 
                             html += `
                                 <div class="document-card">
