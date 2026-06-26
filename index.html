@@ -6,6 +6,7 @@
     <title>StudyVorx // Last-Minute Exam Crunch</title>
     <link rel="stylesheet" href="style.css">
     
+    <!-- AWS SDK -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1435.0.min.js"></script>
 </head>
 <body>
@@ -25,8 +26,9 @@
     </header>
 
     <main style="max-width: 1400px; margin: 40px auto; padding: 0 20px;">
-        <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; align-items: start;">
+        <div class="dashboard-grid">
             
+            <!-- UPLOAD PANEL -->
             <section class="panel-box">
                 <div class="panel-header bg-purple">
                     <span>[Input_Core]</span>
@@ -37,16 +39,16 @@
                     <form onsubmit="event.preventDefault();">
                         
                         <div class="form-group">
-                            <label style="text-transform: uppercase;">Upload Revision Material</label>
+                            <label>Upload Revision Material</label>
                             
-                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" style="margin-top: 5px; cursor: pointer;">
+                            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
                                 <span class="retro-folder">📁</span>
                                 <span id="uploadText" style="font-weight: bold;">Click to Drop PDF, DOC, DOCX or TXT</span>
                                 <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
                             </div>
 
                             <div id="uploadProgressWrapper" style="display: none; margin-top: 15px;">
-                                <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative; box-shadow: var(--neo-shadow-clickable);">
+                                <div style="border: 3px solid var(--border-color); background: #000; height: 25px; position: relative;">
                                     <div id="progressBar" style="background: var(--accent-teal); width: 0%; height: 100%; transition: width 0.1s ease;"></div>
                                 </div>
                                 <div id="progressPercent" style="font-size: 12px; margin-top: 5px; text-align: right; font-family: monospace; font-weight: bold; color: white;">0% TRANSMITTED</div>
@@ -58,13 +60,13 @@
                         </div>
 
                         <div class="form-group" style="margin-top: 30px;">
-                            <label style="text-transform: uppercase;">Or Paste Material Content Data</label>
-                            <textarea class="textarea-field" placeholder="Paste chapters, concept definitions, or raw study metrics here to build your crunch revision sets..." style="width: 100%; box-sizing: border-box; min-height: 120px;"></textarea>
+                            <label>Or Paste Material Content Data</label>
+                            <textarea class="textarea-field" placeholder="Paste chapters, concept definitions, or raw study metrics here to build your crunch revision sets..."></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label style="text-transform: uppercase;">Target Generation Filter</label>
-                            <select class="select-field filter-select" style="width: 100%; box-sizing: border-box;">
+                            <label>Target Generation Filter</label>
+                            <select class="select-field">
                                 <option value="MCQ" selected>Multiple Choice Framework (MCQ)</option>
                                 <option value="VERY_SHORT">Very Short Answer (1 marker)</option>
                                 <option value="SHORT">Short Answer (3 marker)</option>
@@ -72,18 +74,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label style="text-transform: uppercase;">QUANTITY COUNT FILTER</label>
-                            <select class="select-field quantity-select" style="width: 100%; box-sizing: border-box;">
+                            <label>QUANTITY COUNT FILTER</label>
+                            <select class="select-field">
                                 <option value="10" selected>10 Questions</option>
                                 <option value="25">25 Questions</option>
                             </select>
                         </div>
 
-                        <button type="button" class="btn btn-action" style="width: 100%; margin-top: 20px;">GENERATE CRUNCH STUDY SET</button>
+                        <button type="button" class="btn btn-action" style="margin-top: 20px;">GENERATE CRUNCH STUDY SET</button>
                     </form>
                 </div>
             </section>
 
+            <!-- MONITOR PANEL -->
             <section class="panel-box" style="height: 100%; min-height: 500px;">
                 <div class="panel-header bg-teal">
                     <span>Crunch Feed Monitor</span>
@@ -99,9 +102,25 @@
                 </div>
             </section>
 
+            <!-- 🚀 MY DOCUMENTS PANEL 🚀 -->
+            <section class="panel-box" style="grid-column: 1 / -1;">
+                <div class="panel-header" style="background: var(--accent-blue); color: #000;">
+                    <span>[Data_Vault]</span>
+                    <span>My Documents</span>
+                </div>
+                <div class="panel-body">
+                    <div id="documentList">
+                        <div style="color: var(--accent-teal); font-family: monospace;">[CONNECTING TO CLOUD VAULT...]</div>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 
+    <!-- ======================================================= -->
+    <!-- MASTER AWS ENGINE: UPLOAD + FETCH SYNC                  -->
+    <!-- ======================================================= -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const fileInput = document.getElementById('fileInput');
@@ -111,10 +130,77 @@
             const progressPercent = document.getElementById('progressPercent');
             const uploadStatusMessage = document.getElementById('uploadStatusMessage');
             const awsUploadBtn = document.getElementById('awsUploadBtn');
+            const documentList = document.getElementById('documentList');
 
             let currentFile = null;
 
-            // 1. Handle File Selection (Makes text say "SELECTED: file.pdf")
+            // 1. AWS CONFIGURATION
+            const BUCKET_NAME = 'studyvorx-exam-uploads'; 
+
+            AWS.config.update({
+                region: 'us-east-1',
+                credentials: new AWS.CognitoIdentityCredentials({
+                    IdentityPoolId: 'us-east-1:9668dafa-b10a-470c-8d65-c23a17547bfe'
+                })
+            });
+
+            const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: BUCKET_NAME }});
+
+            // 2. FETCH DOCUMENTS LOGIC
+            function loadMyDocuments() {
+                AWS.config.credentials.get(function(authErr) {
+                    if (authErr) {
+                        documentList.innerHTML = `<div style="color: var(--accent-pink);">❌ Auth Error: Check Cognito ID</div>`;
+                        return;
+                    }
+
+                    s3.listObjectsV2({ Prefix: 'uploads/' }, function(err, data) {
+                        if (err) {
+                            documentList.innerHTML = `<div style="color: var(--accent-pink);">❌ Please wait for permissions to sync.</div>`;
+                            return;
+                        }
+
+                        // Filter out empty ghost files
+                        const files = data.Contents.filter(item => item.Size > 0);
+                        
+                        // IF EMPTY: Show "No Documents" Message
+                        if (files.length === 0) {
+                            documentList.innerHTML = `
+                                <div class="empty-vault">
+                                    <span style="font-size: 24px; display: block; margin-bottom: 10px;">📭</span>
+                                    No documents uploaded yet
+                                </div>`;
+                            return;
+                        }
+
+                        // IF FILES EXIST: Sort newest first and display them
+                        files.sort((a, b) => b.LastModified - a.LastModified);
+                        let html = '';
+
+                        files.forEach(file => {
+                            const fileName = file.Key.replace('uploads/', ''); 
+                            const dateStr = new Date(file.LastModified).toLocaleString(); 
+                            const url = s3.getSignedUrl('getObject', { Bucket: BUCKET_NAME, Key: file.Key, Expires: 3600 });
+
+                            html += `
+                                <div class="document-card">
+                                    <div class="doc-info">
+                                        <div class="doc-title">📄 ${fileName}</div>
+                                        <div class="doc-date">UPLOADED: ${dateStr}</div>
+                                    </div>
+                                    <a href="${url}" target="_blank" class="btn-view">VIEW</a>
+                                </div>`;
+                        });
+
+                        documentList.innerHTML = html;
+                    });
+                });
+            }
+
+            // Run immediately on page load
+            loadMyDocuments();
+
+            // 3. UPLOAD LOGIC
             if (fileInput) {
                 fileInput.addEventListener('change', (e) => {
                     if (e.target.files.length > 0) {
@@ -127,17 +213,12 @@
                 });
             }
 
-            // 2. Handle Upload Click
             if (awsUploadBtn) {
                 awsUploadBtn.addEventListener('click', (e) => {
                     e.preventDefault(); 
                     
-                    if (!currentFile) {
-                        showError("Please click the folder to select a file first.");
-                        return;
-                    }
+                    if (!currentFile) return showError("Please click the folder to select a file first.");
 
-                    // Start UI Animation
                     uploadStatusMessage.style.display = 'none';
                     uploadProgressWrapper.style.display = 'block';
                     progressBar.style.width = '10%';
@@ -145,29 +226,10 @@
                     awsUploadBtn.disabled = true;
                     awsUploadBtn.style.opacity = '0.5';
 
-                    // ==========================================
-                    // AWS CONFIGURATION
-                    // ==========================================
-                    
-                    // 👇 YOUR EXACT BUCKET NAME GOES HERE 👇
-                    const BUCKET_NAME = 'studyvorx-exam-uploads'; 
-
-                    AWS.config.update({
-                        region: 'us-east-1',
-                        credentials: new AWS.CognitoIdentityCredentials({
-                            IdentityPoolId: 'us-east-1:9668dafa-b10a-470c-8d65-c23a17547bfe'
-                        })
-                    });
-
-                    // Force Auth Check
                     AWS.config.credentials.get(function(authErr) {
-                        if (authErr) {
-                            showError(`COGNITO AUTH FAILED: ${authErr.message}`);
-                            return;
-                        }
+                        if (authErr) return showError(`COGNITO AUTH FAILED: ${authErr.message}`);
 
-                        // S3 Upload
-                        progressPercent.innerText = 'ACCESS GRANTED. UPLOADING...';
+                        progressPercent.innerText = 'UPLOADING...';
                         const upload = new AWS.S3.ManagedUpload({
                             params: {
                                 Bucket: BUCKET_NAME,
@@ -193,10 +255,13 @@
                                 
                                 uploadStatusMessage.style.display = 'block';
                                 uploadStatusMessage.style.color = 'var(--accent-teal)';
-                                uploadStatusMessage.innerText = `✅ SUCCESS: File stored at AWS Data Core.`;
+                                uploadStatusMessage.innerText = `✅ SUCCESS: File stored. Refreshing Vault...`;
 
                                 awsUploadBtn.disabled = false;
                                 awsUploadBtn.style.opacity = '1';
+
+                                // Refresh the vault list 1.5 seconds after success!
+                                setTimeout(loadMyDocuments, 1500);
                             }
                         });
                     });
