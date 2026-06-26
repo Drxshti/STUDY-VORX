@@ -337,4 +337,86 @@ nav a:hover, .active-link {
     .retro-divider {
         margin: 15px 0;
     }
+}      
+
+/* ========================================= */
+/* [DATA_VAULT] MY DOCUMENTS STYLING         */
+/* ========================================= */
+
+#documentList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* The Document Card */
+.document-card {
+    border: 1px solid var(--border-color, #444);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #000;
+    box-shadow: 4px 4px 0px var(--accent-blue, #00d2ff);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover Animation for the Card */
+.document-card:hover {
+    transform: translateY(-4px) translateX(-4px);
+    box-shadow: 8px 8px 0px var(--accent-blue, #00d2ff);
+}
+
+/* Text Formatting */
+.doc-info {
+    overflow: hidden;
+    padding-right: 15px;
+}
+
+.doc-title {
+    font-weight: bold;
+    color: var(--accent-teal, #00ffa3);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.doc-date {
+    font-size: 11px;
+    color: #888;
+    margin-top: 6px;
+    font-family: monospace;
+}
+
+/* The View Button */
+.btn-view {
+    background: var(--accent-blue, #00d2ff);
+    color: #000;
+    padding: 8px 20px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: monospace;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Hover Animation for the Button */
+.btn-view:hover {
+    background: transparent;
+    color: var(--accent-blue, #00d2ff);
+    border: 2px solid var(--accent-blue, #00d2ff);
+}
+
+/* When the vault is empty */
+.empty-vault {
+    text-align: center;
+    width: 100%;
+    padding: 40px;
+    border: 1px dashed var(--border-color, #444);
+    color: #888;
+    grid-column: 1 / -1;
 }
