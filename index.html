@@ -28,7 +28,7 @@
     <main style="max-width: 1400px; margin: 40px auto; padding: 0 20px;">
         <div class="dashboard-grid">
             
-            <!-- UPLOAD PANEL -->
+            <!-- ================= LEFT COLUMN ================= -->
             <section class="panel-box">
                 <div class="panel-header bg-purple">
                     <span>[Input_Core]</span>
@@ -86,35 +86,39 @@
                 </div>
             </section>
 
-            <!-- MONITOR PANEL -->
-            <section class="panel-box" style="height: 100%; min-height: 500px;">
-                <div class="panel-header bg-teal">
-                    <span>Crunch Feed Monitor</span>
-                    <span>Ready</span>
-                </div>
-                <div class="panel-body" style="height: calc(100% - 40px); display: flex; flex-direction: column;">
-                    <div class="monitor-display" style="flex-grow: 1;">
-                        <div class="status-alert">CONSOLES IDLE</div>
-                        <p class="status-desc">
-                            Drop your notes on the left control dashboard to run high-speed, instant AI-simulated revision checks before stepping into exams.
-                        </p>
+            <!-- ================= RIGHT COLUMN (Grouped) ================= -->
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                
+                <!-- MONITOR PANEL -->
+                <section class="panel-box" style="margin-bottom: 0;">
+                    <div class="panel-header bg-teal">
+                        <span>Crunch Feed Monitor</span>
+                        <span>Ready</span>
                     </div>
-                </div>
-            </section>
-
-            <!-- 🚀 MY DOCUMENTS PANEL 🚀 -->
-            <section class="panel-box" style="grid-column: 1 / -1;">
-                <div class="panel-header" style="background: var(--accent-blue); color: #000;">
-                    <span>[Data_Vault]</span>
-                    <span>My Documents</span>
-                </div>
-                <div class="panel-body">
-                    <div id="documentList">
-                        <div style="color: var(--accent-teal); font-family: monospace;">[CONNECTING TO CLOUD VAULT...]</div>
+                    <div class="panel-body">
+                        <div class="monitor-display">
+                            <div class="status-alert">CONSOLES IDLE</div>
+                            <p class="status-desc">
+                                Drop your notes on the left control dashboard to run high-speed, instant AI-simulated revision checks before stepping into exams.
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
+                <!-- MY DOCUMENTS PANEL (Vault) -->
+                <section class="panel-box" style="margin-bottom: 0;">
+                    <div class="panel-header" style="background: var(--accent-blue); color: #000;">
+                        <span>[Data_Vault]</span>
+                        <span>My Documents</span>
+                    </div>
+                    <div class="panel-body">
+                        <div id="documentList">
+                            <div style="color: var(--accent-teal); font-family: monospace; text-align: center; padding: 20px;">[CONNECTING TO CLOUD VAULT...]</div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
         </div>
     </main>
 
@@ -150,13 +154,13 @@
             function loadMyDocuments() {
                 AWS.config.credentials.get(function(authErr) {
                     if (authErr) {
-                        documentList.innerHTML = `<div style="color: var(--accent-pink);">❌ Auth Error: Check Cognito ID</div>`;
+                        documentList.innerHTML = `<div style="color: var(--accent-pink); padding: 20px; text-align: center;">❌ Auth Error: Check Cognito ID</div>`;
                         return;
                     }
 
                     s3.listObjectsV2({ Prefix: 'uploads/' }, function(err, data) {
                         if (err) {
-                            documentList.innerHTML = `<div style="color: var(--accent-pink);">❌ Please wait for permissions to sync.</div>`;
+                            documentList.innerHTML = `<div style="color: var(--accent-pink); padding: 20px; text-align: center;">❌ Please wait for permissions to sync.</div>`;
                             return;
                         }
 
