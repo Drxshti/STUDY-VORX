@@ -150,19 +150,19 @@
 
             const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: BUCKET_NAME }});
 
-         // 2. FETCH DOCUMENTS LOGIC
+           // 2. FETCH DOCUMENTS LOGIC
             function loadMyDocuments() {
                 AWS.config.credentials.get(function(authErr) {
                     if (authErr) {
-                        // 👇 Color fixed here 👇
-                        documentList.innerHTML = `<div style="color: #ff5555; padding: 20px; text-align: center; font-family: monospace;">❌ Auth Error: Check Cognito ID</div>`;
+                        // Changed to white and unmasked the auth error
+                        documentList.innerHTML = `<div style="color: white; padding: 20px; text-align: center; font-family: monospace;">❌ Auth Error: ${authErr.message}</div>`;
                         return;
                     }
 
                     s3.listObjectsV2({ Prefix: 'uploads/' }, function(err, data) {
                         if (err) {
-                            // 👇 Color fixed here 👇
-                            documentList.innerHTML = `<div style="color: #ff5555; padding: 20px; text-align: center; font-family: monospace;">❌ Please wait for permissions to sync.</div>`;
+                            // 👇 THIS IS STEP 1: Unmasking the S3 Error + White Text 👇
+                            documentList.innerHTML = `<div style="color: white; padding: 20px; text-align: center; font-family: monospace;">❌ S3 ERROR: ${err.message}</div>`;
                             return;
                         }
 
@@ -186,7 +186,9 @@
                         files.forEach(file => {
                             const fileName = file.Key.replace('uploads/', ''); 
                             const dateStr = new Date(file.LastModified).toLocaleString(); 
-                            const url = s3.getSignedUrl('getObject', { Bucket: studyvorx-exam-uploads, Key: file.Key, Expires: 3600 });
+                            
+                            // 👇 CRITICAL BUG FIX: Added quotes around 'studyvorx-exam-uploads' 👇
+                            const url = s3.getSignedUrl('getObject', { Bucket: 'studyvorx-exam-uploads', Key: file.Key, Expires: 3600 });
 
                             html += `
                                 <div class="document-card">
@@ -202,9 +204,6 @@
                     });
                 });
             }
-
-            // Run immediately on page load
-            loadMyDocuments();
 
             // 3. UPLOAD LOGIC
             if (fileInput) {
