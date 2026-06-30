@@ -5,10 +5,11 @@ StudyVorx is a retro-brutalist themed web platform designed to make cramming and
 ## 🚀 Key Features
 
 * **AI Crunch Revision Engine:** Paste notes or upload raw text material, select target generation filters (MCQ, Short Answer, Very Short Answer), specify the question quantity, and generate instant simulated exam questions powered by the Gemini 1.5 Flash model.
-* **Secure Cloud Data Vault:** Upload revision materials directly to AWS S3 using secure Cognito Identity Pools. View and download previously uploaded files directly within the platform.
+* **Local & Secure API Key Management:** Paste your Gemini API key directly into the settings input field on the dashboard (saved in browser `localStorage`), or define it locally in a gitignored `config.js` file for out-of-the-box local usage without committing secrets.
+* **Secure Cloud Data Vault:** Upload revision materials directly to AWS S3 using secure Cognito Identity Pools. View previously uploaded files and download or delete them directly within the platform interface.
 * **Environmental Shift Mode:** A built-in dark/light theme switch that remembers user preferences.
 * **Support & FAQ Node:** Includes an interactive accordion FAQ, contact feedback form, and a visual video tutorial explaining the application flow.
-* **Welcome Overlay Curtain:** A clean, customized splash screen greeting users when logging in.
+* **Welcome Overlay Curtain:** A splash screen overlay greeting users on login.
 
 ## 🛠️ Technology Stack
 
@@ -21,24 +22,36 @@ StudyVorx is a retro-brutalist themed web platform designed to make cramming and
 ```text
 STUDY-VORX/
 ├── index.html          # Core dashboard (material inputs + monitor + vault summary)
-├── mydocuments.html    # Full-screen cloud document vault (lists & redirects files)
+├── mydocuments.html    # Full-screen cloud document vault (lists, views, and deletes files)
 ├── login.html          # Authorization login form & custom welcome curtain
 ├── about.html          # Project specs, hardware matrix, and core missions
-├── contact.html        # Support, FAQs, and video tutorials
+├── contact.html        # Support, FAQs, and interactive feedback loops
 ├── style.css           # Global brutalist typography, layout boxes, and themes
 ├── script.js           # Core gatekeeper, theme toggler, and content generation logic
+├── config.js           # [GITIGNORED] Local credentials configuration 
+├── .gitignore          # Git exclusion definitions (protects config.js secrets)
 ├── README.md           # This specification guide
 ├── Studyvorxintrovideo.mp4 # Tutorial video for the contact page
 └── [assets]            # 3dlogonew.jpg, aianalytics.png, girllaptop.png
 ```
 
-## 🔧 Recent Bug Fixes & Refactoring
+## ⚙️ Local Configuration (API Keys)
 
-The codebase has undergone a complete audit and cleanup, resolving several runtime issues:
+To run the AI Crunch generator, you need a Gemini API Key. To set it up:
 
-1. **JavaScript ReferenceError Fixed:** Cleaned up stray S3 upload logic that was executing outside function closures and referencing undefined variables.
-2. **AI Trigger Corrected:** Resolved a button selector conflict where the Gemini generator was improperly bound to the AWS upload button.
-3. **Parameters Functional:** Linked dropdown select filters (`.filter-select` and `.quantity-select`) to the HTML elements so they correctly direct AI generation formats.
-4. **Duplicate Block Removed:** Cleaned up duplicate login gatekeeper declarations in `script.js` that caused fatal syntax execution errors.
-5. **Unified Navigation & Vault:** Corrected broken links to `my-documents.html` (renamed to `mydocuments.html`), added missing navigation anchors to pages, and standardized the header menu globally.
-6. **Improved HTML Semantics:** Moved the welcome overlay modal in `login.html` out of the `<header>` element to conform to HTML5 validation.
+1. **Option A (Browser UI):** Simply open `index.html` in your browser, enter your key in the **Gemini API Key** field, and it will be saved locally on your machine.
+2. **Option B (Local config.js):** Create a file named `config.js` in the root directory:
+   ```javascript
+   const CONFIG = {
+       GEMINI_API_KEY: "YOUR_GEMINI_API_KEY_HERE"
+   };
+   ```
+   *Note: This file is included in `.gitignore` so your secrets will never be pushed to your public repository.*
+
+## 🔧 Recent Refactoring & Features
+
+1. **API Keys & Credentials Security:** Added `config.js` structure and `.gitignore` file to solve push protection secret leakage.
+2. **AWS S3 Document Deletion:** Added a working delete button (`DEL` / `DELETE`) next to S3 documents in both `index.html` and `mydocuments.html` using `s3.deleteObject()`.
+3. **Dynamic Auth Session Header:** Implemented dynamic navbar rewrites changing the "Login" menu link into `"LOGOUT ([Username])"` on load for active user sessions.
+4. **Interactive Feedback Loop:** Hooked form submit handlers in `contact.html` to simulate latency and show custom success headers.
+5. **Fixed HTML Semantics:** Repaired structural overlay nesting issues in `login.html`.
