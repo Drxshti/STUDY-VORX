@@ -16,6 +16,7 @@
         <nav>
             <a href="login.html">Login</a>
             <a href="index.html">Home</a>
+            <a href="mydocuments.html">My Documents</a>
             <a href="about.html">About Us</a>
             <a href="contact.html" class="active-link">Contact & FAQ</a>
             <button class="btn btn-shift">Shift Mode</button>
@@ -149,8 +150,9 @@
 
     <script src="script.js"></script>
 
-    <!-- DIRECT INLINE SCRIPT FOR FAQ SO IT NEVER FAILS -->
+    <!-- DIRECT INLINE SCRIPT FOR FAQ & FEEDBACK LOOP SO IT NEVER FAILS -->
     <script>
+        // FAQ Accordion
         const faqs = document.querySelectorAll('.faq-question');
         faqs.forEach(question => {
             question.addEventListener('click', () => {
@@ -168,6 +170,44 @@
                 }
             });
         });
+
+        // Contact Form Feedback Loop
+        const contactForm = document.getElementById('contactForm');
+        const contactName = document.getElementById('contactName');
+        const contactEmail = document.getElementById('contactEmail');
+        const contactMessage = document.getElementById('contactMessage');
+        const contactSuccess = document.getElementById('contactSuccess');
+        const contactError = document.getElementById('contactError');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                contactSuccess.style.display = 'none';
+                contactError.style.display = 'none';
+
+                const name = contactName.value.trim();
+                const email = contactEmail.value.trim();
+                const message = contactMessage.value.trim();
+
+                if (!name || !email || !message) {
+                    contactError.style.display = 'block';
+                    return;
+                }
+
+                // Simulate transmission delay
+                const btn = contactForm.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerText = 'TRANSMITTING...';
+
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerText = 'TRANSMIT FEEDBACK';
+                    contactSuccess.style.display = 'block';
+                    contactSuccess.innerHTML = `✅ TRANSMISSION SUCCESS: Suggestion log secured for ${name}.`;
+                    contactForm.reset();
+                }, 1200);
+            });
+        }
     </script>
 </body>
 </html>

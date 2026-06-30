@@ -4,12 +4,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // 0. GLOBAL SELECTORS & SETUP
     // ==========================================
     const loginForm = document.getElementById('loginForm');
-    const generateBtn = document.querySelector('.btn-action');
+    const generateBtn = document.getElementById('generateBtn');
     const textareaField = document.querySelector('.textarea-field');
     const filterSelect = document.querySelector('.filter-select');
     const quantitySelect = document.querySelector('.quantity-select');
     const monitorDisplay = document.querySelector('.monitor-display');
     const shiftBtn = document.querySelector('.btn-shift');
+
+    const geminiApiKeyInput = document.getElementById('geminiApiKeyInput');
+    if (geminiApiKeyInput) {
+        geminiApiKeyInput.value = localStorage.getItem('gemini_api_key') || '';
+        geminiApiKeyInput.addEventListener('input', (e) => {
+            localStorage.setItem('gemini_api_key', e.target.value.trim());
+        });
+    }
    
     
     const fileInput = document.getElementById('fileInput');
@@ -35,20 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isAuthenticated && isLoginPage) {
         window.location.replace('index.html');
     }
-   // ==========================================
-    // 1. SMART ROUTING & GATEKEEPER (OPTIONAL LOGIN)
+
     // ==========================================
-    const isAuthenticated = sessionStorage.getItem('userLoggedIn');
-    const isLoginPage = loginForm !== null;
-
-    // ❌ REMOVED: The code that forces unauthenticated users to login.html has been deleted.
-    // Users can now freely click Home, About Us, Contact, and index.html without logging in.
-
-    // ✅ KEPT: If they DO choose to log in, this prevents them from accidentally 
-    // going back to the login screen while their session is active.
-    if (isAuthenticated && isLoginPage) {
-        window.location.replace('index.html');
-    }
+    // 1.5 DYNAMIC AUTH NAV & LOGOUT
+    // ==========================================
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === 'login.html') {
+            if (isAuthenticated) {
+                const username = sessionStorage.getItem('username') || 'Operator';
+                link.innerHTML = `LOGOUT (${username})`;
+                link.href = '#';
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    sessionStorage.removeItem('userLoggedIn');
+                    sessionStorage.removeItem('username');
+                    window.location.reload();
+                });
+            }
+        }
+    });
 
     // ==========================================
     // 2. GLOBAL FEATURES (Runs on all pages)
@@ -89,7 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 1. Hide the button
                     welcomeBtn.style.display = 'none';
                     
-                    // 2. Show the "Drishti" message
+                    // 2. Show the dynamic message
+                    const lastUser = localStorage.getItem('lastUsername');
+                    if (lastUser) {
+                        welcomeText.innerHTML = `Welcome back to my website, <span style="color: var(--accent-pink);">${lastUser}</span>!`;
+                    } else {
+                        welcomeText.innerHTML = `Welcome to my website, Drishti!`;
+                    }
                     welcomeText.style.display = 'block';
                     
                     // 3. Save to browser memory so it doesn't show again this session
@@ -129,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     sessionStorage.setItem('userLoggedIn', 'true');
                     sessionStorage.setItem('username', user);
+                    localStorage.setItem('lastUsername', user);
                     window.location.replace('index.html'); 
                 }, 1000);
             });
@@ -226,7 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const GEMINI_API_KEY = 'YOUR_SECRET_GOOGLE_API_KEY';
+                const GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || '';
+                if (!GEMINI_API_KEY) {
+                    throw new Error('No API key found. Please enter a valid Gemini API Key in the Input Core settings.');
+                }
                 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
                 const promptInstruction = `You are an elite exam engine. Analyze the text and create exactly ${selectedQuantity} items in ${selectedFilter} format. Return ONLY a valid JSON array.`;
@@ -285,62 +309,3 @@ document.addEventListener('DOMContentLoaded', () => {
         monitorDisplay.appendChild(listContainer);
     }
 });
-
-
-// ==========================================
-            // 6.REAL AWS UPLOAD ENGINE
-            // ==========================================
-            
-             // 1. Configure AWS Credentials
-            AWS.config.region = 'us-east-1'; 
-            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-               IdentityPoolId: 'us-east-1:9668dafa-b10a-470c-8d65-c23a17547bfe', 
-});
-
-            const bucketName = 'studyvorx-exam-uploads'; // e.g., 'studyvorx-exam-uploads'
-
-            // 2. Prepare the Upload Payload
-            const s3 = new AWS.S3({ apiVersion: '2006-03-01', params: { Bucket: bucketName }});
-            const upload = new AWS.S3.ManagedUpload({
-                params: {
-                    Bucket: bucketName,
-                    Key: `uploads/${Date.now()}_${file.name}`, // Adds a timestamp so files don't overwrite each other
-                    Body: file
-                }
-            });
-
-            // 3. Track Live Progress from AWS to the Cyan Bar
-            upload.on('httpUploadProgress', function(evt) {
-                const pct = Math.round((evt.loaded * 100) / evt.total);
-                progressBar.style.width = `${pct}%`;
-                progressPercent.innerText = `${pct}% TRANSMITTED`;
-            });
-
-            // 4. Send the File and Handle the Response
-            upload.send(function(err, data) {
-                if (err) {
-                    // Fail State
-                    uploadStatusMessage.style.display = 'block';
-                    uploadStatusMessage.style.color = 'var(--accent-pink)';
-                    uploadStatusMessage.style.borderColor = 'var(--accent-pink)';
-                    uploadStatusMessage.innerText = `❌ UPLOAD FAILED: ${err.message}`;
-                    
-                    awsUploadBtn.disabled = false;
-                    awsUploadBtn.style.opacity = '1';
-                } else {
-                    // Success State
-                    progressBar.style.width = '100%';
-                    progressPercent.innerText = '100% TRANSMITTED';
-                    
-                    uploadText.style.color = 'var(--accent-teal)';
-                    uploadText.innerText = `✅ ${file.name} Secured!`;
-                    
-                    uploadStatusMessage.style.display = 'block';
-                    uploadStatusMessage.style.color = 'var(--accent-teal)';
-                    uploadStatusMessage.style.borderColor = 'var(--accent-teal)';
-                    uploadStatusMessage.innerText = `✅ SUCCESS: File securely transmitted to AWS Data Core.`;
-
-                    awsUploadBtn.disabled = false;
-                    awsUploadBtn.style.opacity = '1';
-                }
-            });

@@ -19,8 +19,9 @@
         <nav>
             <a href="login.html">Login</a>
             <a href="index.html" class="active-link">Home</a>
+            <a href="mydocuments.html">My Documents</a>
             <a href="about.html">About Us</a>
-            <a href="contact.html">Contact</a>
+            <a href="contact.html">Contact & FAQ</a>
             <button class="btn btn-shift">Shift Mode</button>
         </nav>
     </header>
@@ -38,6 +39,11 @@
                 <div class="panel-body">
                     <form onsubmit="event.preventDefault();">
                         
+                        <div class="form-group">
+                            <label>Gemini API Key</label>
+                            <input type="password" id="geminiApiKeyInput" class="input-field" placeholder="Enter Gemini API Key..." style="font-family: inherit;">
+                        </div>
+
                         <div class="form-group">
                             <label>Upload Revision Material</label>
                             
@@ -66,7 +72,7 @@
 
                         <div class="form-group">
                             <label>Target Generation Filter</label>
-                            <select class="select-field">
+                            <select class="select-field filter-select">
                                 <option value="MCQ" selected>Multiple Choice Framework (MCQ)</option>
                                 <option value="VERY_SHORT">Very Short Answer (1 marker)</option>
                                 <option value="SHORT">Short Answer (3 marker)</option>
@@ -75,13 +81,13 @@
 
                         <div class="form-group">
                             <label>QUANTITY COUNT FILTER</label>
-                            <select class="select-field">
+                            <select class="select-field quantity-select">
                                 <option value="10" selected>10 Questions</option>
                                 <option value="25">25 Questions</option>
                             </select>
                         </div>
 
-                        <button type="button" class="btn btn-action" style="margin-top: 20px;">GENERATE CRUNCH STUDY SET</button>
+                        <button type="button" id="generateBtn" class="btn btn-action" style="margin-top: 20px;">GENERATE CRUNCH STUDY SET</button>
                     </form>
                 </div>
             </section>
@@ -196,7 +202,10 @@
                                         <div class="doc-title">📄 ${fileName}</div>
                                         <div class="doc-date">UPLOADED: ${dateStr}</div>
                                     </div>
-                                    <a href="${url}" target="_blank" class="btn-view">VIEW</a>
+                                    <div style="display: flex; gap: 8px;">
+                                        <a href="${url}" target="_blank" class="btn-view">VIEW</a>
+                                        <button onclick="deleteDocument('${file.Key}')" class="btn-view" style="background: var(--accent-pink); color: white; cursor: pointer; border: none;">DEL</button>
+                                    </div>
                                 </div>`;
                         });
 
@@ -204,6 +213,18 @@
                     });
                 });
             }
+
+            window.deleteDocument = function(key) {
+                if (!confirm("Are you sure you want to permanently delete this document from the cloud vault?")) return;
+                s3.deleteObject({ Key: key }, function(err, data) {
+                    if (err) {
+                        alert("❌ DELETE FAILED: " + err.message);
+                    } else {
+                        alert("✅ Document deleted successfully.");
+                        loadMyDocuments();
+                    }
+                });
+            };
 
             // 3. UPLOAD LOGIC
             if (fileInput) {

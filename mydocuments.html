@@ -17,8 +17,9 @@
         <nav>
             <a href="login.html">Login</a>
             <a href="index.html">Home</a>
-            <a href="my-documents.html" class="active-link">My Documents</a>
+            <a href="mydocuments.html" class="active-link">My Documents</a>
             <a href="about.html">About Us</a>
+            <a href="contact.html">Contact & FAQ</a>
             <button class="btn btn-shift">Shift Mode</button>
         </nav>
     </header>
@@ -107,7 +108,10 @@
                                         <div style="font-weight: bold; color: var(--accent-teal); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 15px;">📄 ${fileName}</div>
                                         <div style="font-size: 12px; color: #888; margin-top: 8px; font-family: monospace;">UPLOADED: ${dateStr}</div>
                                     </div>
-                                    <a href="${url}" target="_blank" style="background: var(--accent-blue); color: #000; padding: 10px 25px; text-decoration: none; font-size: 13px; font-weight: bold; font-family: monospace; border: 2px solid transparent; transition: all 0.2s;">VIEW</a>
+                                    <div style="display: flex; gap: 10px;">
+                                        <a href="${url}" target="_blank" style="background: var(--accent-blue); color: #000; padding: 10px 20px; text-decoration: none; font-size: 13px; font-weight: bold; font-family: monospace; border: 2px solid transparent; transition: all 0.2s;">VIEW</a>
+                                        <button onclick="deleteDocument('${file.Key}')" style="background: var(--accent-pink); color: #fff; padding: 10px 20px; border: none; font-size: 13px; font-weight: bold; font-family: monospace; cursor: pointer; transition: all 0.2s;">DELETE</button>
+                                    </div>
                                 </div>
                             `;
                         });
@@ -116,6 +120,18 @@
                     });
                 });
             }
+
+            window.deleteDocument = function(key) {
+                if (!confirm("Are you sure you want to permanently delete this document from the cloud vault?")) return;
+                s3.deleteObject({ Key: key }, function(err, data) {
+                    if (err) {
+                        alert("❌ Failed to delete document: " + err.message);
+                    } else {
+                        alert("✅ Document deleted successfully.");
+                        loadMyDocuments();
+                    }
+                });
+            };
 
             // Run the fetch function immediately when the page loads
             loadMyDocuments();
