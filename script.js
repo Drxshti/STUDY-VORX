@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const geminiApiKeyInput = document.getElementById('geminiApiKeyInput');
     if (geminiApiKeyInput) {
-        geminiApiKeyInput.value = localStorage.getItem('gemini_api_key') || '';
+        geminiApiKeyInput.value = localStorage.getItem('gemini_api_key') || (typeof CONFIG !== 'undefined' ? CONFIG.GEMINI_API_KEY : '');
         geminiApiKeyInput.addEventListener('input', (e) => {
             localStorage.setItem('gemini_api_key', e.target.value.trim());
         });
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || '';
+                const GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || (typeof CONFIG !== 'undefined' ? CONFIG.GEMINI_API_KEY : '');
                 if (!GEMINI_API_KEY) {
                     throw new Error('No API key found. Please enter a valid Gemini API Key in the Input Core settings.');
                 }
